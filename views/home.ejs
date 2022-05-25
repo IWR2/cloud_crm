@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+  <body>
+    <%- include('./partials/nav.ejs') %>
+    <section>
+      <div>
+        <h2>Welcome!</h2>
+        <p>
+          This app allows you to sign in with Google and displays your name and
+          JWT for the REST API.
+        </p>
+        <p>Click below to sign in and display your JWT.</p>
+        <!-- Image Source:
+        https://developers.google.com/identity/branding-guidelines-->
+        <input
+          id="oauth"
+          type="image"
+          src="/btn_google_signin_dark_normal_web@2x.png"
+          onclick="window.location.href='/authorize';"
+        />
+      </div>
+    </section>
+  </body>
+</html>

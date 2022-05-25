@@ -1,0 +1,36 @@
+/*
+Image Source:
+https://developers.google.com/identity/branding-guidelines
+*/  
+body {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+    background-color: rgb(228, 229, 247);
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  p, h1, h2, h3, a, ul{
+      margin: 4 px;
+      padding: 20 px;
+      text-decoration: none;
+      color: #222;
+    }
+  
+  .jwt_content {
+    inline-size: 470px;
+    overflow-wrap: break-word;
+  }
+  
+  nav{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #ddd;
+    text-transform: uppercase;
+  }
+  
+  input:hover {
+    background-image: url("btn_google_signin_dark_focus_web@2x.png");
+  }

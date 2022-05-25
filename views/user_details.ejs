@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+
+  <body>
+    <%- include('./partials/nav.ejs') %>
+    <!--Detail content-->
+    <h1>User Details</h1>
+    <div class="card">
+      <p>
+        Below are your profile details. Please copy your JWT to use the REST
+        API.
+      </p>
+      <h1>Full Name</h1>
+      <p><%= name %></p>
+      <h1>JWT</h1>
+      <p>
+        <button type="button" onclick="copyEvent('jwt')">Copy JWT</button>
+      </p>
+      <p class="jwt_content" id="jwt"><%= id_token %></p>
+    </div>
+  </body>
+  <!--Copy JWT button function-->
+  <script>
+    const copyEvent = (id) => {
+      var str = document.getElementById(id);
+      window.getSelection().selectAllChildren(str);
+      document.execCommand("Copy");
+    };
+  </script>
+</html>
