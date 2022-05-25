@@ -13,6 +13,9 @@ const user_ds = require("../datastore/users");
 
 const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 
+/* Global variable that stores user credential */
+let USER_CREDENTIAL = null;
+
 /* Renders the home page */
 const index = (req, res) => {
   res.render("home", { title: "Welcome" });
