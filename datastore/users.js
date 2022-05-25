@@ -57,7 +57,15 @@ const check_if_user_exists = (subject) => {
   });
 };
 
+const get_users = () => {
+  const user_query = datastore.createQuery(USER);
+  return datastore.runQuery(user_query).then((users) => {
+    return users[0].map(user_from_datastore);
+  });
+};
+
 module.exports = {
   post_user,
   check_if_user_exists,
+  get_users,
 };
