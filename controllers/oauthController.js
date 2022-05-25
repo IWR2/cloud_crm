@@ -61,6 +61,7 @@ const oauth = (req, res) => {
         .then((response) => {
           // Render the user details
           console.log("Sub: ", response.data.id);
+          // TODO:
           // Check if the sub exists,
           // if sub does not exist in datstore, store it
           // else do not store it
