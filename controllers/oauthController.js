@@ -1,5 +1,4 @@
 const axios = require("axios");
-
 const { google } = require("googleapis");
 const { OAuth2Client } = require("google-auth-library");
 
@@ -9,6 +8,8 @@ const {
   SCOPE,
   REDIRECT_URL,
 } = require("../constants");
+
+const user_ds = require("../datastore/users");
 
 const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 
@@ -61,18 +62,31 @@ const oauth = (req, res) => {
         .then((response) => {
           // Render the user details
           console.log("Sub: ", response.data.id);
-          // TODO:
-          // Check if the sub exists,
-          // if sub does not exist in datstore, store it
-          // else do not store it
-          // finally render the details
-          const user_details = {
-            name: response.data.name,
-            id_token: USER_CREDENTIAL,
-            title: "User Details",
-          };
-          //verify().catch(console.error);
-          res.status(301).render("user_details", user_details);
+          user_ds.check_if_user_exists(response.data.id).then((user) => {
+            if (user[0] === undefined || user[0] === null) {
+              // Render and store the new user details
+              user_ds.post_user(response.data.id).then((new_user) => {
+                console.log("new id: ", new_user.key.id);
+                const user_details = {
+                  user_id: new_user.key.id,
+                  name: response.data.name,
+                  id_token: USER_CREDENTIAL,
+                  title: "User Details",
+                };
+                res.status(301).render("user_details", user_details);
+              });
+            } else {
+              // Render the existng user details
+              console.log("current id: ", user[0].id);
+              const user_details = {
+                user_id: user[0].id,
+                name: response.data.name,
+                id_token: USER_CREDENTIAL,
+                title: "User Details",
+              };
+              res.status(301).render("user_details", user_details);
+            }
+          });
         })
         .catch((error) => {
           console.log("You messed up the get");
