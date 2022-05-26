@@ -45,6 +45,52 @@ const post_service = (name, type, price) => {
   });
 };
 
+/**
+ * Returns the list of all services from the datastore with a limit of
+ * 5 services per page and a link to the next 5 boats. The last page
+ * does not have a next link.
+ * @param {String} req Query string parameter.
+ * @returns JSON contain the list of all services.
+ */
+const get_services = (req) => {
+  let service_query = datastore.createQuery(SERVICE).limit(5);
+  // Store the results set.
+  const results = {};
+  // If this query includes a "cursor" in the query string
+  if (Object.keys(req.query).includes("cursor")) {
+    // Set the query's start to that "cursor" location
+    // will continue to start at the next 5 loads
+    service_query = service_query.start(req.query.cursor);
+  }
+  // Get the next 5 loads
+  return datastore.runQuery(service_query).then((entities) => {
+    // Set the 3 boats to results
+    results.services = entities[0].map(service_from_datastore);
+
+    // For each boat
+    for (let i = 0; i < results.services.length; i++) {
+      let service = results.services[i];
+      // set the self link for each boat
+      service.self =
+        req.protocol + "://" + req.get("host") + `${req.baseUrl}/` + service.id;
+    }
+    // Check datastores' moreResults if there are no more results.
+    if (entities[1].moreResults !== datastore.NO_MORE_RESULTS) {
+      // There are more results, build the next link
+      results.next =
+        req.protocol +
+        "://" +
+        req.get("host") +
+        req.baseUrl +
+        "?cursor=" +
+        entities[1].endCursor;
+    }
+    results.items = results.services.length;
+    return results;
+  });
+};
+
 module.exports = {
   post_service,
+  get_services,
 };
