@@ -1,3 +1,4 @@
+const { entity } = require("@google-cloud/datastore/build/src/entity");
 const ds = require("./datastore");
 const datastore = ds.datastore;
 
@@ -100,7 +101,28 @@ const get_services = async (req) => {
   });
 };
 
+/**
+ * Finds the ID of the service from the datastore and returns the service object.
+ * @param {Number} id ID of the service.
+ * @returns An array of length 1.
+ *      If a service with the provided id exists, then the element in the array
+ *           is that service.
+ *      If no service with the provided id exists, then the value of the
+ *          element is undefined.
+ */
+const get_service = (id) => {
+  const service_id = parseInt(id, 10);
+  const key = datastore.key([SERVICE, service_id]);
+  const service_query = datastore
+    .createQuery(SERVICE)
+    .filter("__key__", "=", key);
+  return datastore.runQuery(service_query).then((entity) => {
+    return entity[0].map(service_from_datastore);
+  });
+};
+
 module.exports = {
   post_service,
   get_services,
+  get_service,
 };
