@@ -5,7 +5,7 @@ const USER = "User";
 
 /**
  * Takes a user from the datstore and retrieves its attributes. It returns
- * the specified boat from the datastore.
+ * the specified user from the datastore.
  * @param {String} USER Kind in the datastore
  * @returns {Object} user User object from the datastore.
  */
