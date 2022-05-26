@@ -48,6 +48,7 @@ const create_service = (req, res) => {
         .end();
       return;
     }
+
     service_ds
       .post_service(req.body.name, req.body.type, req.body.price)
       .then((new_service) => {
