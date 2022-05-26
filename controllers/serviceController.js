@@ -2,6 +2,16 @@ const service_ds = require("../datastore/services");
 
 /* Gets all users from the datastore */
 const create_service = (req, res) => {
+  // Check that the content-type from the client is in app/json
+  if (req.get("content-type") !== "application/json") {
+    // It's not, reject it with status 415
+    res
+      .status(415)
+      .send({ Error: "Server only accepts application/json data" })
+      .end();
+    return;
+  }
+
   const accepts = req.accepts(["application/json"]);
   // If none of these accepts are provided
   if (!accepts) {
@@ -33,7 +43,7 @@ const create_service = (req, res) => {
         .status(400)
         .json({
           Error:
-            "The request object includes at least one not supported attribute",
+            "The request object includes at least one unsupported attribute",
         })
         .end();
       return;
