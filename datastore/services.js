@@ -45,6 +45,14 @@ const post_service = (name, type, price) => {
   });
 };
 
+/* Returns total count of services. */
+const get_services_count = () => {
+  let all_services_query = datastore.createQuery(SERVICE);
+  return datastore.runQuery(all_services_query).then((entities) => {
+    return entities[0].length;
+  });
+};
+
 /**
  * Returns the list of all services from the datastore with a limit of
  * 5 services per page and a link to the next 5 boats. The last page
@@ -52,8 +60,10 @@ const post_service = (name, type, price) => {
  * @param {String} req Query string parameter.
  * @returns JSON contain the list of all services.
  */
-const get_services = (req) => {
+async function get_services(req) {
   let service_query = datastore.createQuery(SERVICE).limit(5);
+  let count = await get_services_count();
+
   // Store the results set.
   const results = {};
   // If this query includes a "cursor" in the query string
@@ -85,10 +95,10 @@ const get_services = (req) => {
         "?cursor=" +
         entities[1].endCursor;
     }
-    results.items = results.services.length;
+    results.items = count;
     return results;
   });
-};
+}
 
 module.exports = {
   post_service,
