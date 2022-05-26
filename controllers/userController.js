@@ -1,5 +1,6 @@
 const user_ds = require("../datastore/users");
 
+/* Gets all users from the datastore */
 const get_all_users = (req, res) => {
   const accepts = req.accepts(["application/json"]);
   // If none of these accepts are provided
