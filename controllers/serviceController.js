@@ -77,6 +77,33 @@ const create_service = (req, res) => {
   }
 };
 
+/**
+ * Gets a list of all services with a limit of 5 services per page. It
+ * provides a link to the next 5 services per page. The last page does
+ * not have an next link.
+ * @param {Object} req Request query to check if there is a cursor key.
+ * If the request and response are not application/json, it
+ * returns status 406.
+ * If the client accepts application/json, the server returns a JSON
+ * of all the services and status 200.
+ */
+const get_all_services = (req, res) => {
+  const accepts = req.accepts(["application/json"]);
+  // If none of these accepts are provided
+  if (!accepts) {
+    // it is False, send back a 406, Not Acceptable
+    res
+      .status(406)
+      .send({ Error: "Client must accept application/json" })
+      .end();
+    return;
+  }
+  const services = service_ds.get_services(req).then((services) => {
+    res.status(200).json(services);
+  });
+};
+
 module.exports = {
   create_service,
+  get_all_services,
 };
