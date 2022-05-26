@@ -82,6 +82,7 @@ const create_service = (req, res) => {
  * provides a link to the next 5 services per page. The last page does
  * not have an next link.
  * @param {Object} req Request query to check if there is a cursor key.
+ * @param {Object} res JSON response of an array of services.
  * If the request and response are not application/json, it
  * returns status 406.
  * If the client accepts application/json, the server returns a JSON
@@ -103,7 +104,49 @@ const get_all_services = (req, res) => {
   });
 };
 
+/**
+ * Gets a service by ID by calling get_service and returns a JSON of
+ * the service object with self link and service's attributes and self
+ * link.
+ * @param {String} req ID of a service to view.
+ * @param {Object} res JSON response of the service's attributes.
+ * If the service does not exist, it returns a 404 status.
+ * If the Accept header is not JSON, it returns status 406.
+ */
+const get_a_service = (req, res) => {
+  const accepts = req.accepts(["application/json"]);
+  if (!accepts) {
+    // it is False, send back a 406, Not Acceptable
+    res
+      .status(406)
+      .send({ Error: "Client must accept application/json" })
+      .end();
+    return;
+  }
+  service_ds.get_service(req.params.id).then((service) => {
+    if (service[0] === undefined || service[0] === null) {
+      res.status(404).json({ Error: "No service with this service_id exists" });
+    } else {
+      res
+        .status(200)
+        .json({
+          id: service[0].id,
+          name: service[0].name,
+          type: service[0].type,
+          price: service[0].price,
+          self:
+            req.protocol +
+            `://${req.get("host")}` +
+            `${req.baseUrl}/` +
+            `${service[0].id}`,
+        })
+        .end();
+    }
+  });
+};
+
 module.exports = {
   create_service,
   get_all_services,
+  get_a_service,
 };
