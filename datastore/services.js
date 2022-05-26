@@ -55,32 +55,31 @@ const get_services_count = () => {
 
 /**
  * Returns the list of all services from the datastore with a limit of
- * 5 services per page and a link to the next 5 boats. The last page
+ * 5 services per page and a link to the next 5 services. The last page
  * does not have a next link.
  * @param {String} req Query string parameter.
  * @returns JSON containing the list of all services.
  */
-async function get_services(req) {
+const get_services = async (req) => {
   let service_query = datastore.createQuery(SERVICE).limit(5);
+  // Get the total number of services
   let count = await get_services_count();
-
   // Store the results set.
   const results = {};
   // If this query includes a "cursor" in the query string
   if (Object.keys(req.query).includes("cursor")) {
     // Set the query's start to that "cursor" location
-    // will continue to start at the next 5 loads
+    // will continue to start at the next 5 services
     service_query = service_query.start(req.query.cursor);
   }
-  // Get the next 5 loads
+  // Get the next 5 services
   return datastore.runQuery(service_query).then((entities) => {
-    // Set the 3 boats to results
+    // Set the 5 services to results
     results.services = entities[0].map(service_from_datastore);
 
-    // For each boat
+    // set the self link for each service
     for (let i = 0; i < results.services.length; i++) {
       let service = results.services[i];
-      // set the self link for each boat
       service.self =
         req.protocol + "://" + req.get("host") + `${req.baseUrl}/` + service.id;
     }
@@ -95,10 +94,11 @@ async function get_services(req) {
         "?cursor=" +
         entities[1].endCursor;
     }
+    // set items to be the total number of services
     results.items = count;
     return results;
   });
-}
+};
 
 module.exports = {
   post_service,
