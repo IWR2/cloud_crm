@@ -58,7 +58,7 @@ const get_services_count = () => {
  * 5 services per page and a link to the next 5 boats. The last page
  * does not have a next link.
  * @param {String} req Query string parameter.
- * @returns JSON contain the list of all services.
+ * @returns JSON containing the list of all services.
  */
 async function get_services(req) {
   let service_query = datastore.createQuery(SERVICE).limit(5);
