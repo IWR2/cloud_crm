@@ -1,5 +1,8 @@
 const express = require("express");
-const routes = require("./routes/routes");
+const oauth = require("./routes/oauthRoutes");
+const users = require("./routes/usersRoutes");
+const services = require("./routes/servicesRoutes");
+
 const bodyParser = require("body-parser");
 
 const app = express();
@@ -10,7 +13,9 @@ app.use(express.static("public"));
 
 app.use(bodyParser.json());
 
-app.use(routes);
+app.use("/", oauth);
+app.use("/users", users);
+app.use("/services", services);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
