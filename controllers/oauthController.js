@@ -36,6 +36,7 @@ const authorize = (req, res) => {
   res.redirect(301, authorizationUrl);
 };
 
+/* Authenticates the client and renders the user's details. */
 const oauth = (req, res) => {
   const data = {
     code: req.query.code,
