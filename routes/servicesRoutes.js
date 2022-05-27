@@ -10,8 +10,20 @@ router.get("/:id", serviceController.get_a_service);
 
 router.put("/:id", serviceController.replace_a_service);
 
+router.patch("/:id", serviceController.update_a_service);
+
 router.put("/", (req, res) => {
   res.set("Accept", "PUT");
+  res
+    .status(405)
+    .json({
+      Error: "Method not allowed",
+    })
+    .end();
+});
+
+router.patch("/", (req, res) => {
+  res.set("Accept", "PATCH");
   res
     .status(405)
     .json({
