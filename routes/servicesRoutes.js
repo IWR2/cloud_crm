@@ -8,4 +8,6 @@ router.get("/", serviceController.get_all_services);
 
 router.get("/:id", serviceController.get_a_service);
 
+router.put("/:id", serviceController.replace_a_service);
+
 module.exports = router;
