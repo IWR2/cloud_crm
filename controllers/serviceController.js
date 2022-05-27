@@ -165,12 +165,14 @@ const get_a_service = (req, res) => {
  * @param {Object} req Attributes of a service.
  * @param {Object} res JSON represemtation of the newly created
  * service with its self link.
- * If the client sends an unsupported MIME type that is not JSON,
- * it returns status 415.
- * If the request and response are not application/json, it
- * returns status 406.
  * If any of the 3 required attributes are missing, not the
  * correct datatype, or not valid, it returns status 400.
+ * If the service does not exist, it returns a 404 status.
+ * If the request and response are not application/json, it
+ * returns status 406.
+ * If the client sends an unsupported MIME type that is not JSON,
+ * it returns status 415.
+
  */
 const replace_a_service = (req, res) => {
   // Check that the content-type from the client is in app/json
@@ -193,62 +195,76 @@ const replace_a_service = (req, res) => {
       .end();
     return;
   }
-
-  if (
-    req.body.name === undefined ||
-    req.body.type === undefined ||
-    req.body.price === undefined
-  ) {
-    res
-      .status(400)
-      .json({
-        Error:
-          "The request object is missing at least one of the required attributes",
-      })
-      .end();
-  } else {
-    const attributes = Object.keys(req.body);
-
-    if (attributes.length > 3) {
+  service_ds.get_service(req.params.id).then((service) => {
+    if (service[0] === undefined || service[0] === null) {
       res
-        .status(400)
-        .json({
-          Error:
-            "The request object includes at least one unsupported attribute",
-        })
+        .status(404)
+        .json({ Error: "No service with this service_id exists" })
         .end();
       return;
-    }
+    } else {
+      if (
+        req.body.name === undefined ||
+        req.body.type === undefined ||
+        req.body.price === undefined
+      ) {
+        res
+          .status(400)
+          .json({
+            Error:
+              "The request object is missing at least one of the required attributes",
+          })
+          .end();
+      } else {
+        const attributes = Object.keys(req.body);
 
-    if (req.body.price < 0 || typeof req.body.price != "number") {
-      res
-        .status(400)
-        .json({
-          Error: "The price attribute must be a non-negative number",
-        })
-        .end();
-      return;
-    }
+        if (attributes.length > 3) {
+          res
+            .status(400)
+            .json({
+              Error:
+                "The request object includes at least one unsupported attribute",
+            })
+            .end();
+          return;
+        }
 
-    service_ds
-      .put_service(req.params.id, req.body.name, req.body.type, req.body.price)
-      .then((new_service) => {
-        new_service[0].self =
-          req.protocol +
-          `://${req.get("host")}` +
-          `${req.baseUrl}/` +
-          `${new_service[0].id}`;
-        // Set the location header and return status 303.
-        res.location(new_service[0].self);
-        res.status(303).send({
-          id: new_service[0].id,
-          name: new_service[0].name,
-          type: new_service[0].type,
-          price: new_service[0].price,
-          self: new_service[0].self,
-        });
-      });
-  }
+        if (req.body.price < 0 || typeof req.body.price != "number") {
+          res
+            .status(400)
+            .json({
+              Error: "The price attribute must be a non-negative number",
+            })
+            .end();
+          return;
+        }
+
+        service_ds
+          .put_service(
+            req.params.id,
+            req.body.name,
+            req.body.type,
+            req.body.price
+          )
+          .then((new_service) => {
+            new_service[0].self =
+              req.protocol +
+              `://${req.get("host")}` +
+              `${req.baseUrl}/` +
+              `${new_service[0].id}`;
+            // Set the location header and return status 303.
+            res.location(new_service[0].self);
+            res.status(303).send({
+              id: new_service[0].id,
+              name: new_service[0].name,
+              type: new_service[0].type,
+              price: new_service[0].price,
+              self: new_service[0].self,
+            });
+          });
+      }
+    }
+  });
 };
 
 module.exports = {
