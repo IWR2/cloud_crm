@@ -159,21 +159,22 @@ const get_a_service = (req, res) => {
 };
 
 /**
- * Creates a new service and adds it to the Datastore, and returns a
- * status 201 and a JSON representation of the newly created service
- * with its self link.
+ * Edits a all attributes of a service.
  * @param {Object} req Attributes of a service.
- * @param {Object} res JSON represemtation of the newly created
+ * @param {Object} res JSON representation of the newly created
  * service with its self link.
- * If any of the 3 required attributes are missing, not the
- * correct datatype, or not valid, it returns status 400.
+ * If the service is updated, it sets the location to the service's
+ * self link and returns status 200 and a JSON representation of the
+ * boat with the boat's self link.
+ * If any attributes are missing, price is not a number, price is
+ * non-negative, or includes an unsupported attribute, it returns
+ * status 400.
  * If the request contains an id, it returns statsu 403.
  * If the service does not exist, it returns a 404 status.
  * If the request and response are not application/json, it
  * returns status 406.
  * If the client sends an unsupported MIME type that is not JSON,
  * it returns status 415.
-
  */
 const replace_a_service = (req, res) => {
   // Check that the content-type from the client is in app/json
@@ -265,7 +266,7 @@ const replace_a_service = (req, res) => {
               `${new_service[0].id}`;
             // Set the location header and return status 303.
             res.location(new_service[0].self);
-            res.status(303).send({
+            res.status(201).send({
               id: new_service[0].id,
               name: new_service[0].name,
               type: new_service[0].type,
@@ -280,26 +281,24 @@ const replace_a_service = (req, res) => {
 
 /**
  * Edit any subset of attributes of a boat.
- * @param {String} req boat_id: ID of the boat.
- * If the boat_id does not exist, it returns status 404.
- * If the client sends an unsupported MIME type that is not JSON,
- * it returns status 415.
+ * @param {Object} req Attributes of a service.
+ * @param {Object} res JSON representation of the newly created service
+ * with its self link.
+ * If the service is updated, it sets the location to the service's
+ * self link and returns status 200 and a JSON representation of the
+ * boat with the boat's self link.
+ * If all attributes are missing, price is not a number, price is
+ * non-negative, or includes an unsupported attribute, it returns
+ * status 400.
+ * If the request contains an id, it returns status 403.
+ * If the service does not exist, it returns a 404 status.
  * If the request and response are not application/json, it
  * returns status 406.
- * If any of the 3 required attributes are missing, not the
- * correct datatype, or not valid, it returns status 400.
- * If the boat name exists already or the client attempts to modify id,
- * it returns status 403.
- * If the boat is updated, it sets the location to the boat's self link
- * and returns status 303 and a JSON representation of the boat with
- * the boat's self link.
- * Source:
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+ * If the client sends an unsupported MIME type that is not JSON,
+ * it returns status 415.
  */
 const update_a_service = (req, res) => {
-  // Check that the content-type from the client is in app/json
   if (req.get("content-type") !== "application/json") {
-    // It's not, reject it with status 415
     res
       .status(415)
       .send({ Error: "Server only accepts application/json data" })
@@ -307,9 +306,8 @@ const update_a_service = (req, res) => {
     return;
   }
   const accepts = req.accepts(["application/json"]);
-  // If none of these accepts are provided
+
   if (!accepts) {
-    // it is False, send back a 406, Not Acceptable
     res
       .status(406)
       .send({ Error: "Client must accept application/json" })
@@ -317,12 +315,15 @@ const update_a_service = (req, res) => {
     return;
   }
 
-  get_boat(req.params.boat_id).then((boat) => {
-    if (boat[0] === undefined || boat[0] === null) {
-      res.status(404).json({ Error: "No boat with this boat_id exists" }).end();
+  service_ds.get_service(req.params.id).then((service) => {
+    if (service[0] === undefined || service[0] === null) {
+      res
+        .status(404)
+        .json({ Error: "No service with this service_id exists" })
+        .end();
       return;
     } else {
-      const keys = ["name", "type", "length"];
+      const keys = ["name", "type", "price"];
       // Get the attributes from the request query
       const attributes = Object.keys(req.body);
 
@@ -337,12 +338,11 @@ const update_a_service = (req, res) => {
         return;
       }
 
-      // Client attempts to modify the ID
       if (attributes.includes("id")) {
         res
           .status(403)
           .json({
-            Error: "boat_id cannot be modified",
+            Error: "service_id cannot be modified",
           })
           .end();
         return;
@@ -355,7 +355,7 @@ const update_a_service = (req, res) => {
             .status(400)
             .json({
               Error:
-                "The request object includes at least one not supported attribute",
+                "The request object includes at least one unsupported attribute",
             })
             .end();
           return;
@@ -373,144 +373,57 @@ const update_a_service = (req, res) => {
         return;
       }
 
-      // Get the current boat's attributes to patch
-      let current_boat = {
-        id: boat[0].id,
-        name: boat[0].name,
-        type: boat[0].type,
-        length: boat[0].length,
+      let current_service = {
+        id: service[0].id,
+        name: service[0].name,
+        type: service[0].type,
+        price: service[0].price,
       };
 
-      // Check if a name exists
-      let name_flag = false;
       if (attributes.includes("name")) {
-        if (!req.body.name.match(/^[\w\-\s]+$/)) {
-          res
-            .status(400)
-            .json({
-              Error: "The name attribute must be alphanumeric",
-            })
-            .end();
-          return;
-        }
-
-        if (req.body.name.length > 33) {
-          res
-            .status(400)
-            .json({
-              Error: "The name attribute may not exceed 33 characters",
-            })
-            .end();
-          return;
-        }
-        name_flag = true;
-        current_boat.name = req.body.name;
+        current_service.name = req.body.name;
       }
 
       if (attributes.includes("type")) {
-        if (!req.body.type.match(/^[\w\-\s]+$/)) {
-          res
-            .status(400)
-            .json({
-              Error: "The type attribute must be alphanumeric",
-            })
-            .end();
-          return;
-        }
+        // Set the name
+        current_service.type = req.body.type;
+      }
 
-        if (req.body.type.length > 28) {
+      if (attributes.includes("price")) {
+        if (req.body.price < 0 || typeof req.body.price != "number") {
           res
             .status(400)
             .json({
-              Error: "The type attribute may not exceed 28 characters",
+              Error: "The price attribute must be a non-negative number",
             })
             .end();
           return;
         }
         // Set the name
-        current_boat.type = req.body.type;
+        current_service.price = req.body.price;
       }
 
-      if (attributes.includes("length")) {
-        if (typeof req.body.length != "number") {
-          res
-            .status(400)
-            .json({
-              Error: "The length attribute must be a number",
-            })
-            .end();
-          return;
-        }
-
-        if (req.body.length < 0) {
-          res
-            .status(400)
-            .json({
-              Error: "The length attribute must be a non-negative number",
-            })
-            .end();
-          return;
-        }
-        // Set the name
-        current_boat.length = req.body.length;
-      }
-
-      if (name_flag) {
-        // Check if there's a boat with this name
-        check_if_name_exists(req.body.name).then((boat) => {
-          if (boat[0] != undefined) {
-            res
-              .status(403)
-              .json({
-                Error: "A boat with that name already exists",
-              })
-              .end();
-            return;
-          } else {
-            // Edit the boat
-            put_boat(
-              current_boat.id,
-              current_boat.name,
-              current_boat.type,
-              current_boat.length
-            ).then((new_boat) => {
-              new_boat[0].self =
-                req.protocol +
-                `://${req.get("host")}` +
-                `${req.baseUrl}/` +
-                `${new_boat[0].id}`;
-              res.status(200).send({
-                id: new_boat[0].id,
-                name: new_boat[0].name,
-                type: new_boat[0].type,
-                length: new_boat[0].length,
-                self: new_boat[0].self,
-              });
-            });
-          }
-        });
-      } else {
-        // Edit the boat
-        put_boat(
-          current_boat.id,
-          current_boat.name,
-          current_boat.type,
-          current_boat.length
-        ).then((new_boat) => {
-          new_boat[0].self =
+      service_ds
+        .put_service(
+          current_service.id,
+          current_service.name,
+          current_service.type,
+          current_service.price
+        )
+        .then((updated_service) => {
+          updated_service[0].self =
             req.protocol +
             `://${req.get("host")}` +
             `${req.baseUrl}/` +
-            `${new_boat[0].id}`;
+            `${updated_service[0].id}`;
           res.status(200).send({
-            id: new_boat[0].id,
-            name: new_boat[0].name,
-            type: new_boat[0].type,
-            length: new_boat[0].length,
-            self: new_boat[0].self,
+            id: updated_service[0].id,
+            name: updated_service[0].name,
+            type: updated_service[0].type,
+            price: updated_service[0].price,
+            self: updated_service[0].self,
           });
         });
-      }
     }
   });
 };
@@ -520,4 +433,5 @@ module.exports = {
   get_all_services,
   get_a_service,
   replace_a_service,
+  update_a_service,
 };
