@@ -121,8 +121,31 @@ const get_service = (id) => {
   });
 };
 
+/**
+ * Updates all attributes of a service and returns a callback from
+ * get_boat with the updated service object from the datastore.
+ * @param {Number} id ID of the service to update.
+ * @param {String} name Name of the service.
+ * @param {String} type Type of the service.
+ * @param {Number} price Price of the service.
+ * @returns {Object} A call to datastore that returns the service object.
+ */
+const put_service = (id, name, type, price) => {
+  const service_id = parseInt(id, 10);
+  const key = datastore.key([SERVICE, service_id]);
+  const service = {
+    name,
+    type,
+    price,
+  };
+  return datastore.save({ key: key, data: service }).then(() => {
+    return get_service(id);
+  });
+};
+
 module.exports = {
   post_service,
   get_services,
   get_service,
+  put_service,
 };
