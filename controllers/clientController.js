@@ -115,6 +115,46 @@ const create_client = (req, res) => {
   }
 };
 
+const get_clients_from_user = (req, res) => {
+  let authorization = req.headers["authorization"];
+  if (authorization !== undefined) {
+    // Get the token value
+    let items = authorization.split(/[ ]+/);
+    if (items.length > 1 && items[0].trim() == "Bearer") {
+      let token = items[1];
+      // verify token
+      oauth2Client
+        .verifyIdToken({
+          idToken: token,
+          audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+        })
+        .then((ticket) => {
+          const payload = ticket.getPayload();
+          const userid = payload["sub"];
+          const accepts = req.accepts(["application/json"]);
+          // If none of these accepts are provided
+          if (!accepts) {
+            // it is False, send back a 406, Not Acceptable
+            res
+              .status(406)
+              .send({ Error: "Client must accept application/json" })
+              .end();
+            return;
+          }
+          client_ds.get_clients(req, userid).then((clients) => {
+            res.status(200).json(clients);
+          });
+        })
+        .catch((err) => {
+          res.status(401).json({ Error: "Missing or invalid JWTs" }).end();
+        });
+    }
+  } else {
+    res.status(401).json({ Error: "Missing or invalid JWTs" }).end();
+  }
+};
+
 module.exports = {
   create_client,
+  get_clients_from_user,
 };
