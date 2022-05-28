@@ -425,10 +425,33 @@ const update_a_service = (req, res) => {
   });
 };
 
+/**
+ * Deletes a service by finding the service in the datastore and a call
+ * to delete_service.
+ * @param {String} req.id ID of the service to delete.
+ * If the service does not exist, it returns status 404.
+ * If the service exists, it returns status 204.
+ */
+const delete_a_service = (req, res) => {
+  service_ds.get_service(req.params.id).then((service) => {
+    if (service[0] === undefined || service[0] === null) {
+      res
+        .status(404)
+        .json({ Error: "No service with this service_id exists" })
+        .end();
+    } else {
+      service_ds.delete_service(req.params.id).then(() => {
+        res.status(204).end();
+      });
+    }
+  });
+};
+
 module.exports = {
   create_service,
   get_all_services,
   get_a_service,
   replace_a_service,
   update_a_service,
+  delete_a_service,
 };
