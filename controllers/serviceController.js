@@ -385,7 +385,6 @@ const update_a_service = (req, res) => {
       }
 
       if (attributes.includes("type")) {
-        // Set the name
         current_service.type = req.body.type;
       }
 
@@ -399,7 +398,6 @@ const update_a_service = (req, res) => {
             .end();
           return;
         }
-        // Set the name
         current_service.price = req.body.price;
       }
 
@@ -411,17 +409,16 @@ const update_a_service = (req, res) => {
           current_service.price
         )
         .then((updated_service) => {
-          updated_service[0].self =
-            req.protocol +
-            `://${req.get("host")}` +
-            `${req.baseUrl}/` +
-            `${updated_service[0].id}`;
           res.status(200).send({
             id: updated_service[0].id,
             name: updated_service[0].name,
             type: updated_service[0].type,
             price: updated_service[0].price,
-            self: updated_service[0].self,
+            self:
+              req.protocol +
+              `://${req.get("host")}` +
+              `${req.baseUrl}/` +
+              `${updated_service[0].id}`,
           });
         });
     }
