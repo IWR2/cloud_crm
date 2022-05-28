@@ -1,4 +1,3 @@
-const { entity } = require("@google-cloud/datastore/build/src/entity");
 const ds = require("./datastore");
 const datastore = ds.datastore;
 
