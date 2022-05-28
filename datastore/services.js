@@ -143,9 +143,21 @@ const put_service = (id, name, type, price) => {
   });
 };
 
+/**
+ * Deletes a service from the datastore.
+ * @param {Number} id ID of the service to delete.
+ * @returns A call to datastore to delete the service.
+ */
+const delete_service = (id) => {
+  const service_id = parseInt(id, 10);
+  const key = datastore.key([SERVICE, service_id]);
+  return datastore.delete(key);
+};
+
 module.exports = {
   post_service,
   get_services,
   get_service,
   put_service,
+  delete_service,
 };
