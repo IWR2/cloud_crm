@@ -221,7 +221,10 @@ const get_a_client_from_user = (req, res) => {
             } else if (userid != client[0].owner) {
               res
                 .status(403)
-                .json({ Error: "This client is owned by someone else" })
+                .json({
+                  Error:
+                    "The user does not have access privelges to this client",
+                })
                 .end();
             } else {
               const current_services = [];
