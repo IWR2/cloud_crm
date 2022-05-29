@@ -15,6 +15,7 @@ const client_from_datastore = (CLIENT) => {
     name: CLIENT.name,
     contact_manager: CLIENT.contact_manager,
     email: CLIENT.email,
+    owner: CLIENT.owner,
     services: CLIENT.services,
   };
   return client;
@@ -59,10 +60,10 @@ const post_client = (name, contact_manager, email, owner, services = []) => {
  * @returns Number of Clients that belong to a User.
  */
 const get_clients_count = (owner_id) => {
-  let all_services_query = datastore
+  let all_clients_query = datastore
     .createQuery(CLIENT)
     .filter("owner", "=", owner_id);
-  return datastore.runQuery(all_services_query).then((entities) => {
+  return datastore.runQuery(all_clients_query).then((entities) => {
     return entities[0].length;
   });
 };
@@ -136,7 +137,29 @@ const get_clients = async (req, owner_id) => {
   });
 };
 
+/**
+ * Uses ID to find the client from the datastore and returns the client
+ * object.
+ * @param {number} id Int ID value
+ * @returns An array of length 1.
+ *      If a client with the provided id exists, then the element in the array
+ *           is that client.
+ *      If no client with the provided id exists, then the value of the
+ *          element is undefined.
+ */
+const get_client = (id) => {
+  const client_id = parseInt(id, 10);
+  const key = datastore.key([CLIENT, client_id]);
+  const client_query = datastore
+    .createQuery(CLIENT)
+    .filter("__key__", "=", key);
+  return datastore.runQuery(client_query).then((entity) => {
+    return entity[0].map(client_from_datastore);
+  });
+};
+
 module.exports = {
   post_client,
   get_clients,
+  get_client,
 };
