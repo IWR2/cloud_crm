@@ -223,7 +223,7 @@ const get_a_client_from_user = (req, res) => {
                 .status(403)
                 .json({
                   Error:
-                    "The user does not have access privelges to this client",
+                    "The user does not have access privileges to this client",
                 })
                 .end();
             } else {
