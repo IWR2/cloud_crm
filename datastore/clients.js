@@ -32,7 +32,6 @@ const client_from_datastore = (CLIENT) => {
  * * value of the user's JWT.
  * @param {String} services The array of services containing their
  * service ID. By default the array is empty.
-
  * @returns A call to datastore to save the client and returns new_client.
  */
 const post_client = (name, contact_manager, email, owner, services = []) => {
@@ -158,8 +157,35 @@ const get_client = (id) => {
   });
 };
 
+/**
+ * Updates all attributes of a client and returns a callback from
+ * get_client with the updated client object from the datastore.
+ * @param {String} name The client's name
+ * @param {String} contact_manager The client's contact manager.
+ * @param {String} email The client's email.
+ * @param {Array} services List of services assigned to the client.
+ * @param {String} owner The owner of this client taken from the sub
+ * * value of the user's JWT.
+ * @returns A call to datastore to save the client and returns new_client.
+ */
+const put_client = (id, name, contact_manager, email, services, owner) => {
+  const client_id = parseInt(id, 10);
+  const key = datastore.key([CLIENT, client_id]);
+  const client = {
+    name,
+    contact_manager,
+    email,
+    services,
+    owner,
+  };
+  return datastore.save({ key: key, data: client }).then(() => {
+    return get_client(id);
+  });
+};
+
 module.exports = {
   post_client,
   get_clients,
   get_client,
+  put_client,
 };
