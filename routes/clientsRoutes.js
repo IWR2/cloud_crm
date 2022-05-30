@@ -12,6 +12,8 @@ router.put("/:id", clientController.replace_a_client);
 
 router.patch("/:id", clientController.update_a_client);
 
+router.delete("/:id", clientController.delete_a_client);
+
 router.put("/", (req, res) => {
   res.set("Accept", "PUT");
   res
@@ -24,6 +26,16 @@ router.put("/", (req, res) => {
 
 router.patch("/", (req, res) => {
   res.set("Accept", "PATCH");
+  res
+    .status(405)
+    .json({
+      Error: "Method not allowed",
+    })
+    .end();
+});
+
+router.delete("/", (req, res) => {
+  res.set("Accept", "DELETE");
   res
     .status(405)
     .json({
