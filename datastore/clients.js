@@ -183,9 +183,21 @@ const put_client = (id, name, contact_manager, email, services, owner) => {
   });
 };
 
+/**
+ * Deletes a client from the datastore.
+ * @param {Number} id ID of the client to delete.
+ * @returns A call to datastore to delete the client.
+ */
+const delete_client = (id) => {
+  const client_id = parseInt(id, 10);
+  const key = datastore.key([CLIENT, client_id]);
+  return datastore.delete(key);
+};
+
 module.exports = {
   post_client,
   get_clients,
   get_client,
   put_client,
+  delete_client,
 };
