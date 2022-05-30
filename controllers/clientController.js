@@ -667,10 +667,76 @@ const update_a_client = (req, res) => {
   }
 };
 
+/**
+ * Deletes a client by finding the service in the datastore and a call
+ * to delete_client.
+ * @param {String} req.id ID of the client to delete.
+ * If the client does not exist, it returns status 404.
+ * If the client exists, it returns status 204.
+ */
+const delete_a_client = (req, res) => {
+  let authorization = req.headers["authorization"];
+  if (authorization !== undefined) {
+    // Get the token value
+    let items = authorization.split(/[ ]+/);
+    if (items.length > 1 && items[0].trim() == "Bearer") {
+      let token = items[1];
+      // verify token
+      oauth2Client
+        .verifyIdToken({
+          idToken: token,
+          audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+        })
+        .then((ticket) => {
+          const payload = ticket.getPayload();
+          const userid = payload["sub"];
+
+          if (req.params.id === undefined || req.params.id === null) {
+            res
+              .status(400)
+              .json({
+                Error: "client_id must not be null",
+              })
+              .end();
+            return;
+          }
+
+          client_ds.get_client(req.params.id).then((client) => {
+            if (client[0] === undefined || client[0] === null) {
+              res
+                .status(404)
+                .json({ Error: "No client with this client_id exists" })
+                .end();
+              return;
+            } else if (userid != client[0].owner) {
+              res
+                .status(403)
+                .json({
+                  Error:
+                    "The user does not have access privileges to this client",
+                })
+                .end();
+            } else {
+              client_ds.delete_client(req.params.id).then(() => {
+                res.status(204).end();
+              });
+            }
+          });
+        })
+        .catch((err) => {
+          res.status(401).json({ Error: "Missing or invalid JWTs" }).end();
+        });
+    }
+  } else {
+    res.status(401).json({ Error: "Missing or invalid JWTs" }).end();
+  }
+};
+
 module.exports = {
   create_client,
   get_clients_from_user,
   get_a_client_from_user,
   replace_a_client,
   update_a_client,
+  delete_a_client,
 };
