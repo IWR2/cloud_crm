@@ -280,6 +280,23 @@ const get_a_client_from_user = (req, res) => {
  * and a list of all of the User's clients.
  */
 const replace_a_client = (req, res) => {
+  if (req.get("content-type") !== "application/json") {
+    res
+      .status(415)
+      .send({ Error: "Server only accepts application/json data" })
+      .end();
+    return;
+  }
+
+  const accepts = req.accepts(["application/json"]);
+  if (!accepts) {
+    res
+      .status(406)
+      .send({ Error: "Client must accept application/json" })
+      .end();
+    return;
+  }
+
   let authorization = req.headers["authorization"];
   if (authorization !== undefined) {
     // Get the token value
@@ -295,16 +312,6 @@ const replace_a_client = (req, res) => {
         .then((ticket) => {
           const payload = ticket.getPayload();
           const userid = payload["sub"];
-          const accepts = req.accepts(["application/json"]);
-          // If none of these accepts are provided
-          if (!accepts) {
-            // it is False, send back a 406, Not Acceptable
-            res
-              .status(406)
-              .send({ Error: "Client must accept application/json" })
-              .end();
-            return;
-          }
 
           if (req.params.id === undefined || req.params.id === null) {
             res
