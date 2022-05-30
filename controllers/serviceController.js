@@ -280,15 +280,15 @@ const replace_a_service = (req, res) => {
 };
 
 /**
- * Edit any subset of attributes of a boat.
+ * Edit any subset of attributes of a service.
  * @param {Object} req Attributes of a service.
  * @param {Object} res JSON representation of the newly created service
  * with its self link.
  * If the service is updated, it sets the location to the service's
  * self link and returns status 200 and a JSON representation of the
- * boat with the boat's self link.
- * If all attributes are missing, price is not a number, price is
- * non-negative, or includes an unsupported attribute, it returns
+ * service with the service's self link.
+ * If all or any attributes are missing, price is not a number, price
+ * is non-negative, or includes an unsupported attribute, it returns
  * status 400.
  * If the request contains an id, it returns status 403.
  * If the service does not exist, it returns a 404 status.
