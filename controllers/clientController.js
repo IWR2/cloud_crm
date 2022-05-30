@@ -273,11 +273,18 @@ const get_a_client_from_user = (req, res) => {
  * @param {String} req To retrieve the authorization header and ID of a
  * client and attributes of a client.
  * @returns JSON of all attributes of a client.
+ * If the client is updated, it returns status 200 and a JSON
+ * representation of the client with the client's self link.
+ * If all or any attributes are missing or includes an unsupported
+ * attribute, it returns status 400.
+ * If the authorization is invalid or missing, it returns status 401.
+ * If the request contains an id, service, or owner it returns status
+ * 403.
+ * If the service does not exist, it returns a 404 status.
  * If the request and response are not application/json, it
  * returns status 406.
- * If the authorization is undefined or invalid, it sends status 401.
- * If the authorization of the client is correct, it returns status 200
- * and a list of all of the User's clients.
+ * If the client sends an unsupported MIME type that is not JSON,
+ * it returns status 415.
  */
 const replace_a_client = (req, res) => {
   if (req.get("content-type") !== "application/json") {
@@ -354,6 +361,36 @@ const replace_a_client = (req, res) => {
               } else {
                 const attributes = Object.keys(req.body);
 
+                if (attributes.includes("id")) {
+                  res
+                    .status(403)
+                    .json({
+                      Error: "client_id cannot be modified",
+                    })
+                    .end();
+                  return;
+                }
+
+                if (attributes.includes("services")) {
+                  res
+                    .status(403)
+                    .json({
+                      Error: "services cannot be modified at this end point",
+                    })
+                    .end();
+                  return;
+                }
+
+                if (attributes.includes("owner")) {
+                  res
+                    .status(403)
+                    .json({
+                      Error: "owner cannot be modified",
+                    })
+                    .end();
+                  return;
+                }
+
                 if (attributes.length > 3) {
                   res
                     .status(400)
@@ -415,9 +452,225 @@ const replace_a_client = (req, res) => {
   }
 };
 
+/**
+ * Edit any subset of attributes of a client except for services.
+ * @param {String} req To retrieve the authorization header and ID of a
+ * client and attributes of a client.
+ * @returns JSON of all attributes of a client.
+ * If the client is updated, it returns status 200 and a JSON
+ * representation of the client with the client's self link.
+ * If all attributes are missing or includes an unsupported
+ * attribute, it returns status 400.
+ * If the authorization is invalid or missing, it returns status 401.
+ * If the request contains an id, service, or owner it returns status
+ * 403.
+ * If the service does not exist, it returns a 404 status.
+ * If the request and response are not application/json, it
+ * returns status 406.
+ * If the client sends an unsupported MIME type that is not JSON,
+ * it returns status 415.
+ */
+const update_a_client = (req, res) => {
+  if (req.get("content-type") !== "application/json") {
+    res
+      .status(415)
+      .send({ Error: "Server only accepts application/json data" })
+      .end();
+    return;
+  }
+
+  const accepts = req.accepts(["application/json"]);
+  if (!accepts) {
+    res
+      .status(406)
+      .send({ Error: "Client must accept application/json" })
+      .end();
+    return;
+  }
+
+  let authorization = req.headers["authorization"];
+  if (authorization !== undefined) {
+    // Get the token value
+    let items = authorization.split(/[ ]+/);
+    if (items.length > 1 && items[0].trim() == "Bearer") {
+      let token = items[1];
+      // verify token
+      oauth2Client
+        .verifyIdToken({
+          idToken: token,
+          audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+        })
+        .then((ticket) => {
+          const payload = ticket.getPayload();
+          const userid = payload["sub"];
+
+          if (req.params.id === undefined || req.params.id === null) {
+            res
+              .status(400)
+              .json({
+                Error: "client_id must not be null",
+              })
+              .end();
+            return;
+          }
+
+          client_ds.get_client(req.params.id).then((client) => {
+            if (client[0] === undefined || client[0] === null) {
+              res
+                .status(404)
+                .json({ Error: "No client with this client_id exists" })
+                .end();
+              return;
+            } else if (userid != client[0].owner) {
+              res
+                .status(403)
+                .json({
+                  Error:
+                    "The user does not have access privileges to this client",
+                })
+                .end();
+            } else {
+              const keys = ["name", "email", "contact_manager"];
+              // Get the attributes from the request query
+              const attributes = Object.keys(req.body);
+              if (attributes.length === 0) {
+                res
+                  .status(400)
+                  .json({
+                    Error:
+                      "The request object must include at least one supported attribute",
+                  })
+                  .end();
+                return;
+              }
+              if (attributes.includes("id")) {
+                res
+                  .status(403)
+                  .json({
+                    Error: "client_id cannot be modified",
+                  })
+                  .end();
+                return;
+              }
+
+              if (attributes.includes("services")) {
+                res
+                  .status(403)
+                  .json({
+                    Error: "services cannot be modified at this end point",
+                  })
+                  .end();
+                return;
+              }
+
+              if (attributes.includes("owner")) {
+                res
+                  .status(403)
+                  .json({
+                    Error: "owner cannot be modified",
+                  })
+                  .end();
+                return;
+              }
+
+              // Check for invalid keys
+              for (let i = 0; i < attributes.length; i++) {
+                if (!keys.includes(attributes[i])) {
+                  res
+                    .status(400)
+                    .json({
+                      Error:
+                        "The request object includes at least one unsupported attribute",
+                    })
+                    .end();
+                  return;
+                }
+              }
+              if (attributes.length > 3) {
+                res
+                  .status(400)
+                  .json({
+                    Error:
+                      "The request object includes at least one not supported attribute",
+                  })
+                  .end();
+                return;
+              }
+
+              let current_client = {
+                id: client[0].id,
+                name: client[0].name,
+                contact_manager: client[0].contact_manager,
+                email: client[0].email,
+                services: client[0].services,
+                owner: client[0].owner,
+              };
+
+              const current_services = [];
+              // Assign a self link for each service
+              for (let i = 0; i < client[0].services.length; i++) {
+                current_services.push({
+                  id: client[0].services.id,
+                  self:
+                    req.protocol +
+                    `://${req.get("host")}` +
+                    "/services/" +
+                    `${client[0].services[i].id}`,
+                });
+              }
+
+              if (attributes.includes("name")) {
+                current_client.name = req.body.name;
+              }
+
+              if (attributes.includes("contact_manager")) {
+                current_client.contact_manager = req.body.contact_manager;
+              }
+
+              if (attributes.includes("email")) {
+                current_client.email = req.body.email;
+              }
+
+              client_ds
+                .put_client(
+                  current_client.id,
+                  current_client.name,
+                  current_client.contact_manager,
+                  current_client.email,
+                  current_client.services,
+                  userid
+                )
+                .then((new_client) => {
+                  res.status(200).send({
+                    id: new_client[0].id,
+                    name: new_client[0].name,
+                    contact_manager: new_client[0].contact_manager,
+                    email: new_client[0].email,
+                    services: current_services,
+                    owner: new_client[0].owner,
+                    self:
+                      req.protocol +
+                      `://${req.get("host")}` +
+                      `${req.baseUrl}/` +
+                      `${new_client[0].id}`,
+                  });
+                });
+            }
+          });
+        })
+        .catch((err) => {
+          res.status(401).json({ Error: "Missing or invalid JWTs" }).end();
+        });
+    }
+  } else {
+    res.status(401).json({ Error: "Missing or invalid JWTs" }).end();
+  }
+};
+
 module.exports = {
   create_client,
   get_clients_from_user,
   get_a_client_from_user,
   replace_a_client,
+  update_a_client,
 };
