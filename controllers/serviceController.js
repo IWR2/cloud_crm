@@ -80,6 +80,7 @@ const create_service = (req, res) => {
           name: new_service.data.name,
           type: new_service.data.type,
           price: new_service.data.price,
+          client: new_service.data.client,
           self:
             req.protocol +
             `://${req.get("host")}` +
@@ -147,6 +148,7 @@ const get_a_service = (req, res) => {
           name: service[0].name,
           type: service[0].type,
           price: service[0].price,
+          client: service[0].client,
           self:
             req.protocol +
             `://${req.get("host")}` +
@@ -230,6 +232,16 @@ const replace_a_service = (req, res) => {
           return;
         }
 
+        if (attributes.includes("client")) {
+          res
+            .status(403)
+            .json({
+              Error: "client cannot be modified",
+            })
+            .end();
+          return;
+        }
+
         if (attributes.length > 3) {
           res
             .status(400)
@@ -256,7 +268,8 @@ const replace_a_service = (req, res) => {
             req.params.id,
             req.body.name,
             req.body.type,
-            req.body.price
+            req.body.price,
+            service[0].client
           )
           .then((new_service) => {
             new_service[0].self =
@@ -271,6 +284,7 @@ const replace_a_service = (req, res) => {
               name: new_service[0].name,
               type: new_service[0].type,
               price: new_service[0].price,
+              client: new_service[0].client,
               self: new_service[0].self,
             });
           });
@@ -348,6 +362,16 @@ const update_a_service = (req, res) => {
         return;
       }
 
+      if (attributes.includes("client")) {
+        res
+          .status(403)
+          .json({
+            Error: "client cannot be modified",
+          })
+          .end();
+        return;
+      }
+
       // Check for invalid keys
       for (let i = 0; i < attributes.length; i++) {
         if (!keys.includes(attributes[i])) {
@@ -378,6 +402,7 @@ const update_a_service = (req, res) => {
         name: service[0].name,
         type: service[0].type,
         price: service[0].price,
+        client: service[0].client,
       };
 
       if (attributes.includes("name")) {
@@ -406,7 +431,8 @@ const update_a_service = (req, res) => {
           current_service.id,
           current_service.name,
           current_service.type,
-          current_service.price
+          current_service.price,
+          current_service.client
         )
         .then((updated_service) => {
           res.status(200).send({
