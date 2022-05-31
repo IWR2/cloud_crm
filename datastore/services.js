@@ -14,6 +14,7 @@ const service_from_datastore = (USER) => {
     id: USER[datastore.KEY].id,
     name: USER.name,
     type: USER.type,
+    client: USER.client,
     price: USER.price,
   };
   return service;
@@ -28,12 +29,13 @@ const service_from_datastore = (USER) => {
  * @param {Number} price Price of the service.
  * @returns A call to datastore to save the service and returns new_service.
  */
-const post_service = (name, type, price) => {
+const post_service = (name, type, price, client = null) => {
   const key = datastore.key(SERVICE);
   const service = {
     name,
     type,
     price,
+    client,
   };
   const new_service = {
     key: key,
@@ -129,13 +131,14 @@ const get_service = (id) => {
  * @param {Number} price Price of the service.
  * @returns {Object} A call to datastore that returns the service object.
  */
-const put_service = (id, name, type, price) => {
+const put_service = (id, name, type, price, client) => {
   const service_id = parseInt(id, 10);
   const key = datastore.key([SERVICE, service_id]);
   const service = {
     name,
     type,
     price,
+    client,
   };
   return datastore.save({ key: key, data: service }).then(() => {
     return get_service(id);
