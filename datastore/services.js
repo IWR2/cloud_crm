@@ -9,13 +9,13 @@ const SERVICE = "Service";
  * @param {String} SERVICE Kind in the datastore
  * @returns {Object} service Service object from the datastore.
  */
-const service_from_datastore = (USER) => {
+const service_from_datastore = (SERVICE) => {
   let service = {
-    id: USER[datastore.KEY].id,
-    name: USER.name,
-    type: USER.type,
-    client: USER.client,
-    price: USER.price,
+    id: SERVICE[datastore.KEY].id,
+    name: SERVICE.name,
+    type: SERVICE.type,
+    price: SERVICE.price,
+    client: SERVICE.client,
   };
   return service;
 };
