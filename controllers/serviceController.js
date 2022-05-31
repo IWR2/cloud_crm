@@ -476,13 +476,13 @@ const delete_a_service = (req, res) => {
             client[0].services.splice(i, 1);
           }
           // Update the client
-          client_ds.update_client(
-            service[0].id,
-            service[0].name,
-            service[0].contact_manager,
-            service[0].email,
-            service[0].services,
-            service[0].owner
+          client_ds.put_client(
+            client[0].id,
+            client[0].name,
+            client[0].contact_manager,
+            client[0].email,
+            client[0].services,
+            client[0].owner
           );
         });
       }
