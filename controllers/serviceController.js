@@ -1,6 +1,6 @@
 const service_ds = require("../datastore/services");
 
-const clientController = require("./controllers/clientController");
+const client_ds = require("../datastore/clients");
 
 /**
  * Creates a new service and adds it to the Datastore, and returns a
@@ -470,13 +470,13 @@ const delete_a_service = (req, res) => {
     } else {
       // Check if the load has a carrier
       if (service[0].client != null) {
-        clientController.get_client(service[0].client).then((client) => {
+        client_ds.get_client(service[0].client).then((client) => {
           // remove that service from the client's services
           for (let i = 0; i < client[0].services.length; i++) {
             client[0].services.splice(i, 1);
           }
           // Update the client
-          clientController.update_client(
+          client_ds.update_client(
             service[0].id,
             service[0].name,
             service[0].contact_manager,
