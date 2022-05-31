@@ -942,12 +942,13 @@ const unlink_service = (req, res) => {
                     .end();
                   return;
                 }
-                // Check if the service has a client
-                if (service[0].client != null) {
-                  for (let i = 0; i < client[0].services.length; i++) {
+                // search for the service to remove
+                for (let i = 0; i < client[0].services.length; i++) {
+                  if (client[0].services[i].id == req.params.service_id) {
                     client[0].services.splice(i, 1);
                   }
                 }
+
                 // Update the client
                 client_ds
                   .put_client(
