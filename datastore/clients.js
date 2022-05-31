@@ -95,7 +95,7 @@ const get_clients = async (req, owner_id) => {
     for (let i = 0; i < results.clients.length; i++) {
       // Check if the client has a service
       let client = results.clients[i];
-      if (client.services.length < 0) {
+      if (client.services.length > 0) {
         // Get the service's data
         let current_services = [];
         let services = client.services;
