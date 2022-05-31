@@ -65,7 +65,6 @@ const oauth = (req, res) => {
       })
         .then((response) => {
           // Render the user details
-          console.log("Sub: ", response.data.id);
           user_ds.check_if_user_exists(response.data.id).then((user) => {
             if (user[0] === undefined || user[0] === null) {
               // Render and store the new user details
@@ -81,7 +80,6 @@ const oauth = (req, res) => {
               });
             } else {
               // Render the existng user details
-              console.log("current id: ", user[0].id);
               const user_details = {
                 user_id: user[0].id,
                 name: response.data.name,
@@ -93,12 +91,10 @@ const oauth = (req, res) => {
           });
         })
         .catch((error) => {
-          console.log("You messed up the get");
           res.status(401).render("401", { title: "401" });
         });
     })
     .catch((error) => {
-      console.log("You messed up the post");
       res.status(400).render("400", { title: "400" });
     });
 };
