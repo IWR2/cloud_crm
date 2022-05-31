@@ -442,6 +442,7 @@ const update_a_service = (req, res) => {
             name: updated_service[0].name,
             type: updated_service[0].type,
             price: updated_service[0].price,
+            client: updated_service[0].client,
             self:
               req.protocol +
               `://${req.get("host")}` +
