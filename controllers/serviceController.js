@@ -1,5 +1,7 @@
 const service_ds = require("../datastore/services");
 
+const clientController = require("./controllers/clientController");
+
 /**
  * Creates a new service and adds it to the Datastore, and returns a
  * status 201 and a JSON representation of the newly created service
@@ -466,6 +468,24 @@ const delete_a_service = (req, res) => {
         .json({ Error: "No service with this service_id exists" })
         .end();
     } else {
+      // Check if the load has a carrier
+      if (service[0].client != null) {
+        clientController.get_client(service[0].client).then((client) => {
+          // remove that service from the client's services
+          for (let i = 0; i < client[0].services.length; i++) {
+            client[0].services.splice(i, 1);
+          }
+          // Update the client
+          clientController.update_client(
+            service[0].id,
+            service[0].name,
+            service[0].contact_manager,
+            service[0].email,
+            service[0].services,
+            service[0].owner
+          );
+        });
+      }
       service_ds.delete_service(req.params.id).then(() => {
         res.status(204).end();
       });
