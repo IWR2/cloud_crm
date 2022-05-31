@@ -69,7 +69,6 @@ const oauth = (req, res) => {
             if (user[0] === undefined || user[0] === null) {
               // Render and store the new user details
               user_ds.post_user(response.data.id).then((new_user) => {
-                console.log("new id: ", new_user.key.id);
                 const user_details = {
                   user_id: new_user.key.id,
                   name: response.data.name,
