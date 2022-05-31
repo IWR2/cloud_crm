@@ -16,6 +16,11 @@ router.delete("/:id", clientController.delete_a_client);
 
 router.put("/:client_id/services/:service_id", clientController.assign_service);
 
+router.delete(
+  "/:client_id/services/:service_id",
+  clientController.unlink_service
+);
+
 router.put("/", (req, res) => {
   res.set("Accept", "PUT");
   res
