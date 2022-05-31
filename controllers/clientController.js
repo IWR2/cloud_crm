@@ -12,9 +12,8 @@ const {
 const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 
 const client_ds = require("../datastore/clients");
-const service_ds = require("../datastore/services");
 
-const serviceController = require("./controllers/serviceController");
+const service_ds = require("../datastore/services");
 
 /**
  * Creates a new client and adds it to the Datastore, and returns status
@@ -234,7 +233,7 @@ const get_a_client_from_user = (req, res) => {
               // Assign a self link for each service
               for (let i = 0; i < client[0].services.length; i++) {
                 current_services.push({
-                  id: client[0].services.id,
+                  id: client[0].services[i].id,
                   self:
                     req.protocol +
                     `://${req.get("host")}` +
@@ -720,8 +719,145 @@ const delete_a_client = (req, res) => {
                 })
                 .end();
             } else {
+              // Remove client's relation to its services
+              for (let i = 0; i < client[0].services.length; i++) {
+                serviceController
+                  .get_service(client[0].services[i])
+                  .then((service) => {
+                    serviceController.update_service(
+                      service[0].id,
+                      service[0].name,
+                      service[0].type,
+                      service[0].price,
+                      null
+                    );
+                  });
+              }
+
               client_ds.delete_client(req.params.id).then(() => {
                 res.status(204).end();
+              });
+            }
+          });
+        })
+        .catch((err) => {
+          res.status(401).json({ Error: "Missing or invalid JWTs" }).end();
+        });
+    }
+  } else {
+    res.status(401).json({ Error: "Missing or invalid JWTs" }).end();
+  }
+};
+
+/**
+ * Assigns a client a service and assigns that client to that service.
+ * @param {Object} req To retrieve the client_id and service_id.
+ * If the client is assigned to the service, it return status 204.
+ * If the authorization is invalid or missing, it returns status 401.
+ * If the client does not belong to the user or the service already has
+ * a client, it return status 403.
+ * If the service or client does not exist, it return status 404.
+ */
+const assign_service = (req, res) => {
+  let authorization = req.headers["authorization"];
+  if (authorization !== undefined) {
+    // Get the token value
+    let items = authorization.split(/[ ]+/);
+    if (items.length > 1 && items[0].trim() == "Bearer") {
+      let token = items[1];
+      // verify token
+      oauth2Client
+        .verifyIdToken({
+          idToken: token,
+          audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+        })
+        .then((ticket) => {
+          const payload = ticket.getPayload();
+          const userid = payload["sub"];
+
+          if (
+            req.params.client_id === undefined ||
+            req.params.client_id === null ||
+            req.params.service_id === undefined ||
+            req.params.service_id === null
+          ) {
+            res
+              .status(400)
+              .json({
+                Error: "client_id or service_id must not be null",
+              })
+              .end();
+            return;
+          }
+
+          client_ds.get_client(req.params.client_id).then((client) => {
+            if (client[0] === undefined || client[0] === null) {
+              res
+                .status(404)
+                .json({
+                  Error:
+                    "No client with this client_id exists, and/or no service with this service_id exists",
+                })
+                .end();
+              return;
+            } else if (userid != client[0].owner) {
+              res
+                .status(403)
+                .json({
+                  Error:
+                    "The user does not have access privileges to this client",
+                })
+                .end();
+            } else {
+              service_ds.get_service(req.params.service_id).then((service) => {
+                if (service[0] === undefined || service[0] === null) {
+                  res
+                    .status(404)
+                    .json({
+                      Error:
+                        "No client with this client_id exists, and/or no service with this service_id exists",
+                    })
+                    .end();
+                  return;
+                }
+
+                if (service[0].client != null) {
+                  res
+                    .status(403)
+                    .json({
+                      Error: "The service already has a client",
+                    })
+                    .end();
+                  return;
+                }
+
+                const new_service = {
+                  id: req.params.service_id,
+                };
+                // Add the service to the client
+                client[0].services.push(new_service);
+
+                // Update the client
+                client_ds
+                  .put_client(
+                    req.params.client_id,
+                    client[0].name,
+                    client[0].contact_manager,
+                    client[0].email,
+                    client[0].services,
+                    client[0].owner
+                  )
+                  .then(() => {
+                    // Update the service id, name, type, price, client
+                    service_ds.put_service(
+                      req.params.service_id,
+                      service[0].name,
+                      service[0].type,
+                      service[0].price,
+                      req.params.client_id
+                    );
+                    res.status(204).end();
+                  });
               });
             }
           });
@@ -742,4 +878,5 @@ module.exports = {
   replace_a_client,
   update_a_client,
   delete_a_client,
+  assign_service,
 };
