@@ -14,6 +14,8 @@ router.patch("/:id", clientController.update_a_client);
 
 router.delete("/:id", clientController.delete_a_client);
 
+router.put("/:client_id/services/:service_id", clientController.assign_service);
+
 router.put("/", (req, res) => {
   res.set("Accept", "PUT");
   res
