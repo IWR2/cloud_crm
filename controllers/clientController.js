@@ -12,6 +12,9 @@ const {
 const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 
 const client_ds = require("../datastore/clients");
+const service_ds = require("../datastore/services");
+
+const serviceController = require("./controllers/serviceController");
 
 /**
  * Creates a new client and adds it to the Datastore, and returns status
