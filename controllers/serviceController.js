@@ -3,23 +3,20 @@ const service_ds = require("../datastore/services");
 const client_ds = require("../datastore/clients");
 
 /**
- * Creates a new service and adds it to the Datastore, and returns a
- * status 201 and a JSON representation of the newly created service
- * with its self link.
+ * Creates a new service and adds it to the Datastore.
  * @param {Object} req Attributes of a service.
- * @param {Object} res JSON represemtation of the newly created
+ * @param {Object} res JSON representation of the newly created
  * service with its self link.
- * If the client sends an unsupported MIME type that is not JSON,
- * it returns status 415.
- * If the request and response are not application/json, it
- * returns status 406.
+ * If the service is created, it returns status 201 and a JSON
+ * representation of the newly created service with its self link.
  * If any of the 3 required attributes are missing, not the
  * correct datatype, or not valid, it returns status 400.
+ * If the response is not application/json, it returns status 406.
+ * If the client sends an unsupported MIME type that is not JSON,
+ * it returns status 415.
  */
 const create_service = (req, res) => {
-  // Check that the content-type from the client is in app/json
   if (req.get("content-type") !== "application/json") {
-    // It's not, reject it with status 415
     res
       .status(415)
       .send({ Error: "Server only accepts application/json data" })
@@ -28,9 +25,7 @@ const create_service = (req, res) => {
   }
 
   const accepts = req.accepts(["application/json"]);
-  // If none of these accepts are provided
   if (!accepts) {
-    // it is False, send back a 406, Not Acceptable
     res
       .status(406)
       .send({ Error: "Client must accept application/json" })
@@ -94,21 +89,20 @@ const create_service = (req, res) => {
 };
 
 /**
- * Gets a list of all services with a limit of 5 services per page. It
+ * Returns a list of all services with a limit of 5 services per page. It
  * provides a link to the next 5 services per page. The last page does
  * not have an next link.
- * @param {Object} req Request query to check if there is a cursor key.
+ * @param {Object} req Request query to check if there is a cursor key
+ * for the next page of services.
  * @param {Object} res JSON response of an array of services.
- * If the request and response are not application/json, it
- * returns status 406.
  * If the client accepts application/json, the server returns a JSON
  * of all the services and status 200.
+ * If the client does not accept application/json, it returns status
+ * 406.
  */
 const get_all_services = (req, res) => {
   const accepts = req.accepts(["application/json"]);
-  // If none of these accepts are provided
   if (!accepts) {
-    // it is False, send back a 406, Not Acceptable
     res
       .status(406)
       .send({ Error: "Client must accept application/json" })
@@ -121,18 +115,16 @@ const get_all_services = (req, res) => {
 };
 
 /**
- * Gets a service by ID by calling get_service and returns a JSON of
- * the service object with self link and service's attributes and self
- * link.
- * @param {String} req ID of a service to view.
- * @param {Object} res JSON response of the service's attributes.
+ * Returns a JSON representation of a service from the Datastore.
+ * @param {String} req ID of a service.
+ * @param {Object} res JSON representation of the service's attributes.
  * If the service does not exist, it returns a 404 status.
- * If the Accept header is not JSON, it returns status 406.
+ * If the response is not application/json, it
+ * returns status 406.
  */
 const get_a_service = (req, res) => {
   const accepts = req.accepts(["application/json"]);
   if (!accepts) {
-    // it is False, send back a 406, Not Acceptable
     res
       .status(406)
       .send({ Error: "Client must accept application/json" })
@@ -163,27 +155,25 @@ const get_a_service = (req, res) => {
 };
 
 /**
- * Edits a all attributes of a service.
+ * Replaces all attributes of a service. The service retains any existing
+ * associations to a client.
  * @param {Object} req Attributes of a service.
- * @param {Object} res JSON representation of the newly created
- * service with its self link.
- * If the service is updated, it sets the location to the service's
- * self link and returns status 200 and a JSON representation of the
- * boat with the boat's self link.
- * If any attributes are missing, price is not a number, price is
- * non-negative, or includes an unsupported attribute, it returns
+ * @param {Object} res JSON representation of the replaced  service
+ * with its self link.
+ * If the service is updated, it returns a JSON representation of the
+ * service with the service's self link and status 201.
+ * If all or any attributes are missing, price is not a number, price
+ * is non-negative, or includes an unsupported attribute, it returns
  * status 400.
- * If the request contains an id, it returns statsu 403.
- * If the service does not exist, it returns a 404 status.
- * If the request and response are not application/json, it
- * returns status 406.
+ * If the request contains an id or client, it returns status 403.
+ * If the service does not exist, it returns status 404.
+ * If the client does not accept application/json, it returns status
+ * 406.
  * If the client sends an unsupported MIME type that is not JSON,
  * it returns status 415.
  */
 const replace_a_service = (req, res) => {
-  // Check that the content-type from the client is in app/json
   if (req.get("content-type") !== "application/json") {
-    // It's not, reject it with status 415
     res
       .status(415)
       .send({ Error: "Server only accepts application/json data" })
@@ -192,9 +182,7 @@ const replace_a_service = (req, res) => {
   }
 
   const accepts = req.accepts(["application/json"]);
-  // If none of these accepts are provided
   if (!accepts) {
-    // it is False, send back a 406, Not Acceptable
     res
       .status(406)
       .send({ Error: "Client must accept application/json" })
@@ -279,8 +267,6 @@ const replace_a_service = (req, res) => {
               `://${req.get("host")}` +
               `${req.baseUrl}/` +
               `${new_service[0].id}`;
-            // Set the location header and return status 303.
-            res.location(new_service[0].self);
             res.status(201).send({
               id: new_service[0].id,
               name: new_service[0].name,
@@ -296,20 +282,19 @@ const replace_a_service = (req, res) => {
 };
 
 /**
- * Edit any subset of attributes of a service.
+ * Edits any subset of attributes of a service except for clients.
  * @param {Object} req Attributes of a service.
- * @param {Object} res JSON representation of the newly created service
- * with its self link.
- * If the service is updated, it sets the location to the service's
- * self link and returns status 200 and a JSON representation of the
- * service with the service's self link.
- * If all or any attributes are missing, price is not a number, price
+ * @param {Object} res JSON representation of the updated service with
+ * its self link.
+ * If the service is updated, it returns a JSON representation of the
+ * service with the service's self link and status 200.
+ * If all attributes are missing, price is not a number, price
  * is non-negative, or includes an unsupported attribute, it returns
  * status 400.
- * If the request contains an id, it returns status 403.
- * If the service does not exist, it returns a 404 status.
- * If the request and response are not application/json, it
- * returns status 406.
+ * If the request contains an id or client, it returns status 403.
+ * If the service does not exist, it returns status 404
+ * If the client does not accept application/json, it returns status
+ * 406.
  * If the client sends an unsupported MIME type that is not JSON,
  * it returns status 415.
  */
@@ -340,7 +325,6 @@ const update_a_service = (req, res) => {
       return;
     } else {
       const keys = ["name", "type", "price"];
-      // Get the attributes from the request query
       const attributes = Object.keys(req.body);
 
       if (attributes.length === 0) {
@@ -455,11 +439,10 @@ const update_a_service = (req, res) => {
 };
 
 /**
- * Deletes a service by finding the service in the datastore and a call
- * to delete_service.
+ * Deletes a service from the Datastore.
  * @param {String} req.id ID of the service to delete.
- * If the service does not exist, it returns status 404.
  * If the service exists, it returns status 204.
+ * If the service does not exist, it returns status 404.
  */
 const delete_a_service = (req, res) => {
   service_ds.get_service(req.params.id).then((service) => {
