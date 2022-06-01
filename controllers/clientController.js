@@ -24,7 +24,8 @@ const service_ds = require("../datastore/services");
  * If any of the 3 required attributes are missing, it returns status
  * 400.
  * If the authorization is undefined or invalid, it returns status 401.
- * If the response is not application/json, it returns status 406.
+ * If the client does not accept application/json, it returns status
+ * 406.
  * If the client sends an unsupported MIME type that is not JSON,
  * it returns status 415.
  */
@@ -140,16 +141,15 @@ const create_client = (req, res) => {
  * If the authorization of the client is correct, it returns status 200
  * and a list of all of the User's clients.
  * If the authorization is undefined or invalid, it sends status 401.
- * If the response is not application/json, it returns status 406.
+ * If the client does not accept application/json, it returns status
+ * 406.
  */
 const get_clients_from_user = (req, res) => {
   let authorization = req.headers["authorization"];
   if (authorization !== undefined) {
-    // Get the token value
     let items = authorization.split(/[ ]+/);
     if (items.length > 1 && items[0].trim() == "Bearer") {
       let token = items[1];
-      // verify token
       oauth2Client
         .verifyIdToken({
           idToken: token,
@@ -208,11 +208,9 @@ const get_clients_from_user = (req, res) => {
 const get_a_client_from_user = (req, res) => {
   let authorization = req.headers["authorization"];
   if (authorization !== undefined) {
-    // Get the token value
     let items = authorization.split(/[ ]+/);
     if (items.length > 1 && items[0].trim() == "Bearer") {
       let token = items[1];
-      // verify token
       oauth2Client
         .verifyIdToken({
           idToken: token,
@@ -325,7 +323,8 @@ const get_a_client_from_user = (req, res) => {
  * If the user does not have access to the client, it returns status
  * 403.
  * If the service does not exist, it returns a 404 status.
- * If the response is not application/json, it returns status 406.
+ * If the client does not accept application/json, it returns status
+ * 406.
  * If the client sends an unsupported MIME type that is not JSON,
  * it returns status 415.
  */
@@ -349,11 +348,9 @@ const replace_a_client = (req, res) => {
 
   let authorization = req.headers["authorization"];
   if (authorization !== undefined) {
-    // Get the token value
     let items = authorization.split(/[ ]+/);
     if (items.length > 1 && items[0].trim() == "Bearer") {
       let token = items[1];
-      // verify token
       oauth2Client
         .verifyIdToken({
           idToken: token,
@@ -522,7 +519,8 @@ const replace_a_client = (req, res) => {
  * If the user does not have access to the client, it returns status
  * 403.
  * If the service does not exist, it returns status 404.
- * If the response is not application/json, it returns status 406.
+ * If the client does not accept application/json, it returns status
+ * 406.
  * If the client sends an unsupported MIME type that is not JSON,
  * it returns status 415.
  */
@@ -546,15 +544,13 @@ const update_a_client = (req, res) => {
 
   let authorization = req.headers["authorization"];
   if (authorization !== undefined) {
-    // Get the token value
     let items = authorization.split(/[ ]+/);
     if (items.length > 1 && items[0].trim() == "Bearer") {
       let token = items[1];
-      // verify token
       oauth2Client
         .verifyIdToken({
           idToken: token,
-          audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+          audience: CLIENT_ID,
         })
         .then((ticket) => {
           const payload = ticket.getPayload();
@@ -844,15 +840,13 @@ const delete_a_client = (req, res) => {
 const assign_service = (req, res) => {
   let authorization = req.headers["authorization"];
   if (authorization !== undefined) {
-    // Get the token value
     let items = authorization.split(/[ ]+/);
     if (items.length > 1 && items[0].trim() == "Bearer") {
       let token = items[1];
-      // verify token
       oauth2Client
         .verifyIdToken({
           idToken: token,
-          audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+          audience: CLIENT_ID,
         })
         .then((ticket) => {
           const payload = ticket.getPayload();
@@ -920,7 +914,6 @@ const assign_service = (req, res) => {
                 // Add the service to the client
                 client[0].services.push(new_service);
 
-                // Update the client
                 client_ds
                   .put_client(
                     req.params.client_id,
@@ -931,7 +924,6 @@ const assign_service = (req, res) => {
                     client[0].owner
                   )
                   .then(() => {
-                    // Update the service id, name, type, price, client
                     service_ds.put_service(
                       req.params.service_id,
                       service[0].name,
@@ -978,15 +970,13 @@ const assign_service = (req, res) => {
 const unlink_service = (req, res) => {
   let authorization = req.headers["authorization"];
   if (authorization !== undefined) {
-    // Get the token value
     let items = authorization.split(/[ ]+/);
     if (items.length > 1 && items[0].trim() == "Bearer") {
       let token = items[1];
-      // verify token
       oauth2Client
         .verifyIdToken({
           idToken: token,
-          audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+          audience: CLIENT_ID,
         })
         .then((ticket) => {
           const payload = ticket.getPayload();
@@ -1044,7 +1034,6 @@ const unlink_service = (req, res) => {
                   }
                 }
 
-                // Update the client
                 client_ds
                   .put_client(
                     client[0].id,
@@ -1055,7 +1044,6 @@ const unlink_service = (req, res) => {
                     client[0].owner
                   )
                   .then(() => {
-                    // Update the service id, name, type, price, client
                     service_ds.put_service(
                       service[0].id,
                       service[0].name,
