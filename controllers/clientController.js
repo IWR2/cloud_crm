@@ -1,13 +1,6 @@
-const axios = require("axios");
-const { google } = require("googleapis");
 const { OAuth2Client } = require("google-auth-library");
 
-const {
-  CLIENT_ID,
-  CLIENT_SECRET,
-  SCOPE,
-  REDIRECT_URL,
-} = require("../constants");
+const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } = require("../constants");
 
 const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 
