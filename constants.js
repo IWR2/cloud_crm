@@ -1,6 +1,6 @@
 // Google OAuth 2.0
-//const BASE_URL = "https://cloud-crm-351300.wl.r.appspot.com";
-const BASE_URL = "http://localhost:8080"; // Local URL
+const BASE_URL = "https://cloud-crm-351300.wl.r.appspot.com";
+//const BASE_URL = "http://localhost:8080"; // Local URL
 
 const CLIENT_ID =
   "507032020500-a1enhq5f16jsoupmobs3falph9r0t6hj.apps.googleusercontent.com";
