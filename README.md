@@ -87,8 +87,12 @@ Google Datastore will store the ID, name, type, price, and client of each Servic
 
 #### Status: 405 Method Not Allowed
 
-| {  "Error": "Method not allowed" } |
-|------------------------------------|
+```
+{
+    "Error": "Method not allowed"
+}
+```
+
 
 # Get all Users
 
@@ -134,15 +138,30 @@ JSON
 
 #### Status: 200 OK
 
-| {  "results": [  {  "id": "4763052276711424",  "subject": "110853085749362908724"  },  {  "id": "6366479599534080",  "subject": "108860368623644752447"  }  ] } |
-|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "results": [
+        {
+            "id": "4763052276711424",
+            "subject": "110853085749362908724"
+        },
+        {
+            "id": "6366479599534080",
+            "subject": "108860368623644752447"
+        }
+    ]
+}
+```
 
 #### 
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 # Create a Service
 
@@ -181,8 +200,13 @@ JSON
 
 ### Request Body Example
 
-| {  "name": "MVIDIA Mesla A100",  "type": "IaaS",  "price": 30500.00 } |
-|-----------------------------------------------------------------------|
+```
+{
+    "name": "MVIDIA Mesla A100",
+    "type": "IaaS",
+    "price": 30500.00
+}
+```
 
 ## Response
 
@@ -203,35 +227,58 @@ JSON
 
 #### Status: 201 Created
 
-| {  "id": "100",  "name": "MVIDIA Mesla A100",  "type": "IaaS",  "price": 30500,  "client": null,  "self": "http://\<your-app\>/services/100" } |
-|------------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "id": "100",
+    "name": "MVIDIA Mesla A100",
+    "type": "IaaS",
+    "price": 30500,
+    "client": null,
+    "self": "http://<your-app>/services/100"
+}
+```
 
 #### 
 
 #### Status: 400 Bad Request
 
-| {  "Error": "The request object is missing at least one of the required attributes" } |
-|---------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing at least one of the required attributes"
+}
+```
 
 #### 
 
-| {  "Error": "The request object includes at least one not supported attribute" } |
-|----------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object includes at least one not supported attribute"
+}
+```
 
 #### 
 
-| {  "Error": "The price attribute must be a non-negative number" } |
-|-------------------------------------------------------------------|
+```
+{
+    "Error": "The price attribute must be a non-negative number"
+}
+```
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 #### Status: 415 Unsupported Media Type
 
-| {  "Error": "Server only accepts application/json data" } |
-|-----------------------------------------------------------|
+```
+{
+    "Error": "Server only accepts application/json data"
+}
+```
 
 # Get a Service
 
@@ -276,20 +323,34 @@ JSON
 
 #### Status: 200 OK
 
-| {  "id": "100",  "name": "MVIDIA Mesla A100",  "type": "IaaS",  "price": 30500,  "client": null,  "self": "http://\<your-app\>/services/100" } |
-|------------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "id": "100",
+    "name": "MVIDIA Mesla A100",
+    "type": "IaaS",
+    "price": 30500,
+    "client": null,
+    "self": "http://<your-app>/services/100"
+}
+```
 
 #### 
 
 #### Status: 404 Not Found
 
-| {  "Error": "No service with this service_id exists" } |
-|--------------------------------------------------------|
+```
+{
+    "Error": "No service with this service_id exists"
+}
+```
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 # Get all Services
 
@@ -332,14 +393,62 @@ JSON
 ### Response Examples
 
 #### Status: 200 OK
-
-| {  "services": [  {  "id": "100",  "name": "Mintel Ice Lake CPU",  "type": "IaaS",  "price": 1950.55,  "client": null,  "self": "https://\<your-app\>/services/100"  },  {  "id": "2",  "name": "MVIDIA Mesla A100",  "type": "IaaS",  "price": 30500,  "client": null,  "self": "https://\<your-app\>/services/2"  },  {  "id": "456",  "name": "Moogle Cloud",  "type": "SaaS",  "price": 1000,  "client": null,  "self": "https://\<your-app\>/services/456"  },  {  "id": "3",  "name": "NMD EPYC Milan CPU Platform",  "type": "IaaS",  "price": 1900.55,  "client": null,  "self": "https://\<your-app\>/services/3"  },  {  "id": "5",  "name": "Mintel Cascade Lake CPU",  "type": "IaaS",  "price": 55800,  "client": null,  "self": "https://\<your-app\>/services/5"  }  ],  "next": "http://\<your-app\>/services?cursor=...",  "items": 6 } |
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "services": [
+        {
+            "id": "100",
+            "name": "Mintel Ice Lake CPU",
+            "type": "IaaS",
+            "price": 1950.55,
+            "client": null,
+            "self": "https://<your-app>/services/100"
+        },
+        {
+            "id": "2",
+            "name": "MVIDIA Mesla A100",
+            "type": "IaaS",
+            "price": 30500,
+            "client": null,
+            "self": "https://<your-app>/services/2"
+        },
+        {
+            "id": "456",
+            "name": "Moogle Cloud",
+            "type": "SaaS",
+            "price": 1000,
+            "client": null,
+            "self": "https://<your-app>/services/456"
+        },
+        {
+            "id": "3",
+            "name": "NMD EPYC Milan CPU Platform",
+            "type": "IaaS",
+            "price": 1900.55,
+            "client": null,
+            "self": "https://<your-app>/services/3"
+        },
+        {
+            "id": "5",
+            "name": "Mintel Cascade Lake CPU",
+            "type": "IaaS",
+            "price": 55800,
+            "client": null,
+            "self": "https://<your-app>/services/5"
+        }
+    ],
+    "next": "http://<your-app>/services?cursor=...",
+    "items": 6
+}
+```
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 # Replace a Service
 
@@ -380,8 +489,13 @@ JSON
 
 ### Request Body Example
 
-| {  "name": "MVIDIA Mesla T4",  "type": "Trial IaaS",  "price": 1500.00, } |
-|---------------------------------------------------------------------------|
+```
+{
+    "name": "MVIDIA Mesla T4",
+    "type": "Trial IaaS",
+    "price": 1500.00,
+}
+```
 
 ## Response
 
@@ -404,46 +518,80 @@ JSON
 
 #### Status: 201 Created
 
-| {  "id": "100",  "name": "MVIDIA Mesla T4",  "type": "IaaS",  "price": 30500,  "client": null,  "self": "http://\<your-app\>/services/100" } |
-|----------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "id": "100",
+    "name": "MVIDIA Mesla T4",
+    "type": "IaaS",
+    "price": 30500,
+    "client": null,
+    "self": "http://<your-app>/services/100"
+}
+```
 
 #### Status: 400 Bad Request
 
-| {  "Error": "The request object is missing at least one of the required attributes" } |
-|---------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing at least one of the required attributes"
+}
+```
 
 #### 
 
-| {  "Error": "The request object includes at least one unsupported attribute" } |
-|--------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object includes at least one unsupported attribute"
+}
+```
 
 #### 
 
-| {  "Error": "The price attribute must be a non-negative number" } |
-|-------------------------------------------------------------------|
+```
+{
+    "Error": "The price attribute must be a non-negative number"
+}
+```
 
 #### Status: 403 Forbidden
 
-| {  "Error": "service_id cannot be modified" } |
-|-----------------------------------------------|
+```
+{
+    "Error": "service_id cannot be modified"
+}
+```
 
-| {  "Error": "client cannot be modified" } |
-|-------------------------------------------|
+#### 
+
+```
+{
+    "Error": "client cannot be modified"
+}
+```
 
 #### Status: 404 Not Found
 
-| {  "Error": "No service with this service_id exists" } |
-|--------------------------------------------------------|
+```
+{
+    "Error": "No service with this service_id exists"
+}
+```
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 #### Status: 415 Unsupported Media Type
 
-| {  "Error": "Server only accepts application/json data" } |
-|-----------------------------------------------------------|
+```
+{
+    "Error": "Server only accepts application/json data"
+}
+```
 
 # Update a Service
 
@@ -484,8 +632,11 @@ JSON
 
 ### Request Body Example
 
-| {  "price": 2100.00 } |
-|-----------------------|
+```
+{
+    "price": 2100.00
+}
+```
 
 ## Response
 
@@ -507,51 +658,82 @@ JSON
 ### Response Examples
 
 #### Status: 200 OK
-
-| {  "id": "100",  "name": "MVIDIA Mesla T4",  "type": "IaaS",  "price": 2100,  "client": null,  "self": "http://\<your-app\>/services/100" } |
-|---------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "id": "100",
+    "name": "MVIDIA Mesla T4",
+    "type": "IaaS",
+    "price": 2100,
+    "client": null,
+    "self": "http://<your-app>/services/100"
+}
+```
 
 #### 
 
 #### Status: 400 Bad Request
 
-| {  "Error": "The request object must include at least one supported attribute" } |
-|----------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object must include at least one supported attribute"
+}
+```
 
 #### 
 
-| {  "Error": "The request object includes at least one unsupported attribute" } |
-|--------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object includes at least one unsupported attribute"
+}
+```
 
 #### 
 
-| {  "Error": "The price attribute must be a non-negative number" } |
-|-------------------------------------------------------------------|
+```
+{
+    "Error": "The price attribute must be a non-negative number"
+}
+```
 
 #### Status: 403 Forbidden
 
-| {  "Error": "service_id cannot be modified" } |
-|-----------------------------------------------|
+```
+{
+    "Error": "service_id cannot be modified"
+}
+```
 
 #### 
 
-| {  "Error": "client cannot be modified" } |
-|-------------------------------------------|
+```
+{
+    "Error": "client cannot be modified"
+}
+```
 
 #### Status: 404 Not Found
 
-| {  "Error": "No service with this service_id exists" } |
-|--------------------------------------------------------|
+```
+{
+    "Error": "No service with this service_id exists"
+}
+```
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 #### Status: 415 Unsupported Media Type
 
-| {  "Error": "Server only accepts application/json data" } |
-|-----------------------------------------------------------|
+```
+{
+    "Error": "Server only accepts application/json data"
+}
+```
 
 # Delete a Service
 
@@ -599,15 +781,16 @@ Failure: JSON
 
 #### Status: 204 No Content
 
-|   |
-|---|
 
 #### 
 
 #### Status: 404 Not Found
 
-| {  "Error": "No service with this service_id exists" } |
-|--------------------------------------------------------|
+```
+{
+    "Error": "No service with this service_id exists"
+}
+```
 
 # Create a Client
 
@@ -647,8 +830,13 @@ JSON
 
 ### Request Body Example
 
-| {  "name": "Real Engine",  "contact_manager": "Sim Tweeny",  "email": "sim_tweeny@realengine.com", } |
-|------------------------------------------------------------------------------------------------------|
+```
+{
+    "name": "Real Engine",
+    "contact_manager": "Sim Tweeny",
+    "email": "sim_tweeny@realengine.com",
+}
+```
 
 ## Response
 
@@ -670,35 +858,58 @@ JSON
 
 #### Status: 201 Created
 
-| {  "id": "456",  "name": "Real Engine",  "contact_manager": "Sim Tweeny",  "email": "sim_tweeny@realengine.com",  "email": "EPIC",  "self": "http://\<your-app\>/clients/456" } |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "id": "456",
+    "name": "Real Engine",
+    "contact_manager": "Sim Tweeny",
+    "email": "sim_tweeny@realengine.com",
+    "email": "EPIC",
+    "self": "http://<your-app>/clients/456"
+}
+```
 
 #### 
 
 #### Status: 400 Bad Request
 
-| {  "Error": "The request object is missing at least one of the required attributes" } |
-|---------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing at least one of the required attributes"
+}
+```
 
 #### 
 
-| {  "Error": "The request object includes at least one unsupported attribute" } |
-|--------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object includes at least one unsupported attribute"
+}
+```
 
 #### Status: 401 Unauthorized
 
-| {  "Error": "The request object is missing credentials or credentials are invalid" } |
-|--------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing credentials or credentials are invalid"
+}
+```
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 #### Status: 415 Unsupported Media Type
 
-| {  "Error": "Server only accepts application/json data" } |
-|-----------------------------------------------------------|
+```
+{
+    "Error": "Server only accepts application/json data"
+}
+```
 
 # Get a Client for a User
 
@@ -746,32 +957,53 @@ JSON
 
 #### Status: 200 OK
 
-| {  "id": "456",  "name": "Real Engine",  "contact_manager": "Sim Tweeny",  "email": "sim_tweeny@realengine.com",  "services": [],  "owner": "EPIC",  "self": "http://\<your-app\>/clients/456" } |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "id": "456",
+    "name": "Real Engine",
+    "contact_manager": "Sim Tweeny",
+    "email": "sim_tweeny@realengine.com",
+    "services": [],
+    "owner": "EPIC",
+    "self": "http://<your-app>/clients/456"
+}
+```
 
 #### 
 
 #### Status: 401 Unauthorized
 
-| {  "Error": "The request object is missing credentials or credentials are invalid" } |
-|--------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing credentials or credentials are invalid"
+}
+```
 
 #### 
 
 #### Status: 403 Forbidden
 
-| {  "Error": "The user does not have access privileges to this client" } |
-|-------------------------------------------------------------------------|
+```
+{
+    "Error": "The user does not have access privileges to this client"
+}
+```
 
 #### Status: 404 Not Found
 
-| {  "Error": "No client with this client_id exists" } |
-|------------------------------------------------------|
+```
+{
+    "Error": "No client with this client_id exists"
+}
+```
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 # Get all Clients for a User
 
@@ -817,32 +1049,95 @@ JSON
 
 #### Status: 200 OK
 
-| {  "clients": [  {  "id": "456",  "name": "Real Games",  "contact_manager": "Theo Teeny",  "email": "theo_teeny@realgames.com",  "owner": "EPIC",  "services": [],  "self": "http://\<your-app\>/clients/456"  },  {  "id": "993",  "name": "CastleMorning",  "contact_manager": "Kim Library",  "email": "library_kim@castlemorning.com",  "owner": "EPIC",  "services": [],  "self": "http://\<your-app\>/clients/993"  },  {  "id": "95014",  "name": "Smapple",  "contact_manager": "Speve Bobs",  "email": "itsspeve@smapple.com",  "owner": "EPIC",  "services": [],  "self": "http://\<your-app\>/clients/95014"  },  {  "id": "30",  "name": "Warrioros",  "contact_manager": "Speve Perr",  "email": "perr_speve@warriors.com",  "owner": "EPIC",  "services": [],  "self": " http://\<your-app\>/clients/30"  },  {  "id": "467",  "name": "Exciting Company",  "contact_manager": "Belon Busk",  "email": "busk_belon@excitingcompany.com",  "owner": "EPIC",  "services": [],  "self": " http://\<your-app\>/clients/467"  }  ],  "next": "http://\<your-app\>/clients?cursor=...",  "items": 6 } |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "clients": [
+        {
+            "id": "456",
+            "name": "Real Games",
+            "contact_manager": "Theo Teeny",
+            "email": "theo_teeny@realgames.com",
+            "owner": "EPIC",
+            "services": [],
+            "self": "http://<your-app>/clients/456"
+        },
+        {
+            "id": "993",
+            "name": "CastleMorning",
+            "contact_manager": "Kim Library",
+            "email": "library_kim@castlemorning.com",
+            "owner": "EPIC",
+            "services": [],
+            "self": "http://<your-app>/clients/993"
+        },
+        {
+            "id": "95014",
+            "name": "Smapple",
+            "contact_manager": "Speve Bobs",
+            "email": "itsspeve@smapple.com",
+            "owner": "EPIC",
+            "services": [],
+            "self": "http://<your-app>/clients/95014"
+        },
+        {
+            "id": "30",
+            "name": "Warrioros",
+            "contact_manager": "Speve Perr",
+            "email": "perr_speve@warriors.com",
+            "owner": "EPIC",
+            "services": [],
+            "self": " http://<your-app>/clients/30"
+        },
+        {
+            "id": "467",
+            "name": "Exciting Company",
+            "contact_manager": "Belon Busk",
+            "email": "busk_belon@excitingcompany.com",
+            "owner": "EPIC",
+            "services": [],
+            "self": " http://<your-app>/clients/467"
+        }
+    ],
+    "next": "http://<your-app>/clients?cursor=...",
+    "items": 6
+}
+```
 
 #### 
 
 #### Status: 401 Unauthorized
 
-| {  "Error": "The request object is missing credentials or credentials are invalid" } |
-|--------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing credentials or credentials are invalid"
+}
+```
 
 #### 
 
 #### Status: 403 Forbidden
 
-| {  "Error": "The user does not have access privileges to this client" } |
-|-------------------------------------------------------------------------|
+```
+{
+    "Error": "The user does not have access privileges to this client"
+}
+```
 
 #### Status: 404 Not Found
 
-| {  "Error": "No client with this client_id exists" } |
-|------------------------------------------------------|
+```
+{
+    "Error": "No client with this client_id exists"
+}
+```
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 # Replace a Client
 
@@ -884,8 +1179,13 @@ JSON
 
 ### Request Body Example
 
-| {  "name": "Not Engine",  "contact_manager": "Tim Bweeny",  "email": "tim_bweeny@realgames.com", } |
-|----------------------------------------------------------------------------------------------------|
+```
+{
+    "name": "Not Engine",
+    "contact_manager": "Tim Bweeny",
+    "email": "tim_bweeny@realgames.com",
+}
+```
 
 ## Response
 
@@ -909,56 +1209,100 @@ JSON
 
 #### Status: 201 Created
 
-| {  "id": "456",  "name": "Not Engine",  "contact_manager": "Tim Bweeny",  "email": "tim_bweeny@realgames.com",  "owner": "EPIC",  "services": [  {  "id": "100",  "self": "http://\<your-app\>/services/100"  }  ],  "self": " http://\<your-app\>/clients/456" } |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "id": "456",
+    "name": "Not Engine",
+    "contact_manager": "Tim Bweeny",
+    "email": "tim_bweeny@realgames.com",
+    "owner": "EPIC",
+    "services": [
+        {
+            "id": "100",
+            "self": "http://<your-app>/services/100"
+        }
+    ],
+    "self": " http://<your-app>/clients/456"
+}
+```
 
 #### 
 
 #### Status: 400 Bad Request
 
-| {  "Error": "The request object is missing at least one of the required attributes" } |
-|---------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing at least one of the required attributes"
+}
+```
 
 #### 
 
-| {  "Error": "The request object includes at least one unsupported attribute" } |
-|--------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object includes at least one unsupported attribute"
+}
+```
 
 #### 
 
 #### Status: 401 Unauthorized
 
-| {  "Error": "The request object is missing credentials or credentials are invalid" } |
-|--------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing credentials or credentials are invalid"
+}
+```
 
 #### Status: 403 Forbidden
 
-| {  "Error": "The user does not have access privileges to this client" } |
-|-------------------------------------------------------------------------|
+```
+{
+    "Error": "The user does not have access privileges to this client"
+}
+```
 
-| {  "Error": "client_id cannot be modified" } |
-|----------------------------------------------|
+```
+{
+    "Error": "client_id cannot be modified"
+}
+```
 
-| {  "Error": "owner cannot be modified" } |
-|------------------------------------------|
+```
+{
+    "Error": "owner cannot be modified"
+}
+```
 
-| {  "Error": "services cannot be modified at this endpoint" } |
-|--------------------------------------------------------------|
+```
+{
+    "Error": "services cannot be modified at this endpoint"
+}
+```
 
 #### Status: 404 Not Found
 
-| {  "Error": "No client with this client_id exists" } |
-|------------------------------------------------------|
+```
+{
+    "Error": "No client with this client_id exists"
+}
+```
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 #### Status: 415 Unsupported Media Type
 
-| {  "Error": "Server only accepts application/json data" } |
-|-----------------------------------------------------------|
+```
+{
+    "Error": "Server only accepts application/json data"
+}
+```
 
 # Update a Client
 
@@ -1000,8 +1344,11 @@ JSON
 
 ### Request Body Example
 
-| {  "contact_manager": "Simmothy Tweeny" } |
-|-------------------------------------------|
+```
+{
+    "contact_manager": "Simmothy Tweeny"
+}
+```
 
 ## Response
 
@@ -1025,58 +1372,102 @@ JSON
 
 #### Status: 200 OK
 
-| {  "id": "456",  "name": "Not Engine",  "contact_manager": "Simmothy Tweeny",  "email": "tim_bweeny@realgames.com",  "owner": "EPIC",  "services": [  {  "id": "100",  "self": "http://\<your-app\>/services/100"  }  ],  "self": " http://\<your-app\>/clients/456" } |
-|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+```
+{
+    "id": "456",
+    "name": "Not Engine",
+    "contact_manager": "Simmothy Tweeny",
+    "email": "tim_bweeny@realgames.com",
+    "owner": "EPIC",
+    "services": [
+        {
+            "id": "100",
+            "self": "http://<your-app>/services/100"
+        }
+    ],
+    "self": " http://<your-app>/clients/456"
+}
+```
 
 #### 
 
 #### Status: 400 Bad Request
 
-| {  "Error": "The request object must include at least one supported attribute" } |
-|----------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object must include at least one supported attribute"
+}
+```
 
 #### 
 
-| {  "Error": "The request object includes at least one unsupported attribute" } |
-|--------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object includes at least one unsupported attribute"
+}
+```
 
 #### 
 
 #### Status: 401 Unauthorized
 
-| {  "Error": "The request object is missing credentials or credentials are invalid" } |
-|--------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing credentials or credentials are invalid"
+}
+```
 
 #### Status: 403 Forbidden
 
-| {  "Error": "The user does not have access privileges to this client" } |
-|-------------------------------------------------------------------------|
+```
+{
+    "Error": "The user does not have access privileges to this client"
+}
+```
 
-| {  "Error": "client_id cannot be modified" } |
-|----------------------------------------------|
+```
+{
+    "Error": "client_id cannot be modified"
+}
+```
 
-| {  "Error": "owner cannot be modified" } |
-|------------------------------------------|
+```
+{
+    "Error": "owner cannot be modified"
+}
+```
 
-| {  "Error": "services cannot be modified at this endpoint" } |
-|--------------------------------------------------------------|
+```
+{
+    "Error": "services cannot be modified at this endpoint"
+}
+```
 
 #### Status: 404 Not Found
 
-| {  "Error": "No client with this client_id exists" } |
-|------------------------------------------------------|
+```
+{
+    "Error": "No client with this client_id exists"
+}
+```
 
 #### Status: 406 Not Acceptable
 
-| {  "Error": "Client must accept application/json" } |
-|-----------------------------------------------------|
+```
+{
+    "Error": "Client must accept application/json"
+}
+```
 
 #### 
 
 #### Status: 415 Unsupported Media Type
 
-| {  "Error": "Server only accepts application/json data" } |
-|-----------------------------------------------------------|
+```
+{
+    "Error": "Server only accepts application/json data"
+}
+```
 
 # Delete a Client
 
@@ -1128,25 +1519,31 @@ Failure: JSON
 
 #### Status: 204 No Content
 
-|   |
-|---|
-
 #### 
 
 #### Status: 401 Unauthorized
 
-| {  "Error": "The request object is missing credentials or credentials are invalid" } |
-|--------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing credentials or credentials are invalid"
+}
+```
 
 #### Status: 403 Forbidden
 
-| {  "Error": "The user does not have access privileges to this client" } |
-|-------------------------------------------------------------------------|
+```
+{
+    "Error": "The user does not have access privileges to this client"
+}
+```
 
 #### Status: 404 Not Found
 
-| {  "Error": "No client with this client_id exists" } |
-|------------------------------------------------------|
+```
+{
+    "Error": "No client with this client_id exists"
+}
+```
 
 ## 
 
@@ -1201,26 +1598,36 @@ Failure: JSON
 
 #### Status: 204 No Content
 
-|   |
-|---|
 
 #### Status: 401 Unauthorized
 
-| {  "Error": "The request object is missing credentials or credentials are invalid" } |
-|--------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing credentials or credentials are invalid"
+}
+```
 
 #### Status: 403 Forbidden
 
-| {  "Error": "The user does not have access privileges to this client" } |
-|-------------------------------------------------------------------------|
+```
+{
+    "Error": "The user does not have access privileges to this client"
+}
+```
 
-| {  "Error": "The service already has a client" } |
-|--------------------------------------------------|
+```
+{
+    "Error": "The service already has a client"
+}
+```
 
 #### Status: 404 Not Found
 
-| {  "Error": "No client with this client_id exists, and/or no service with this service_id exists" } |
-|-----------------------------------------------------------------------------------------------------|
+```
+{
+    "Error": "No client with this client_id exists, and/or no service with this service_id exists"
+}
+```
 
 # 
 
@@ -1275,22 +1682,29 @@ Failure: JSON
 
 #### Status: 204 No Content
 
-|   |
-|---|
 
 #### 
 
 #### Status: 401 Unauthorized
 
-| {  "Error": "The request object is missing credentials or credentials are invalid" } |
-|--------------------------------------------------------------------------------------|
+```
+{
+    "Error": "The request object is missing credentials or credentials are invalid"
+}
+```
 
 #### Status: 403 Forbidden
 
-| {  "Error": "The user does not have access privileges to this client" } |
-|-------------------------------------------------------------------------|
+```
+{
+    "Error": "The user does not have access privileges to this client"
+}
+```
 
 #### Status: 404 Not Found
 
-| {  "Error": "No client with this client_id exists, and/or no service with this service_id exists" } |
-|-----------------------------------------------------------------------------------------------------|
+```
+{
+    "Error": "No client with this client_id exists, and/or no service with this service_id exists"
+}
+```
