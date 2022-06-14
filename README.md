@@ -1,6 +1,8 @@
-Cloud Service CRM API
+# Cloud Service CRM API
 
 App URL: <https://cloud-crm-351300.wl.r.appspot.com>
+
+This is a REST API using Google Datastore that allows users to create clients and assign them cloud services.
 
 # Change Log
 
